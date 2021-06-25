@@ -224,6 +224,10 @@ class QuantumRouter(Node):
         self.network_manager = NewNetworkManager(self)
         self.map_to_middle_node = {}
         self.app = None
+        #-------------------------------------
+        self.all_pair_shortest_dist = None
+        self.neighbors = None
+        #-------------------------------------
 
     def receive_message(self, src: str, msg: "Message") -> None:
         if msg.receiver == "resource_manager":

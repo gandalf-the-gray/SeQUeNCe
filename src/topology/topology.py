@@ -14,6 +14,9 @@ if TYPE_CHECKING:
 from .node import *
 from ..components.optical_channel import QuantumChannel, ClassicalChannel
 
+#----------------------------
+import networkx as nx
+#----------------------------
 
 class Topology():
     """Class for managing network topologies.
@@ -124,7 +127,14 @@ class Topology():
                 self.add_quantum_channel(node1, node2, **qchannel_params)
 
         # generate forwarding tables
+        #-------------------------------
+        all_pair_dist, G = self.all_pair_shortest_dist()
+        #-------------------------------
         for node in self.get_nodes_by_type("QuantumRouter"):
+            #-----------------------------------------------
+            node.all_pair_shortest_dist = all_pair_dist
+            node.neighbors = list(G.neighbors(node.name))
+            #-----------------------------------------------
             table = self.generate_forwarding_table(node.name)
             for dst, next_node in table.items():
                 node.network_manager.protocol_stack[0].add_forwarding_rule(dst, next_node)
@@ -288,4 +298,23 @@ class Topology():
         # TODO: add higher-level protocols not added by nodes
         raise NotImplementedError("populate_protocols has not been added")
 
+    #-----------------------------------------------
+    def generate_nx_graph(self):
+        G = nx.Graph()
+        for node in self.nodes.keys():
 
+            if type(self.nodes[node]) == BSMNode:
+                continue
+
+            for neighbor in self.graph_no_middle[node]:    
+                distance = self.graph_no_middle[node][neighbor]
+                print('------------node-------------', type(node))
+                print('------------neighbor-------------', type(neighbor))
+                print('------------distance-------------', type(distance))
+                G.add_edge(node, neighbor, weight=distance)      
+        return G
+
+    def all_pair_shortest_dist(self):
+        G = self.generate_nx_graph()
+        return nx.floyd_warshall(G), G
+    #------------------------------------------------

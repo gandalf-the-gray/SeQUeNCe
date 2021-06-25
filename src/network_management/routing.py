@@ -8,11 +8,12 @@ Also included is the message type used by the routing protocol.
 from enum import Enum
 from typing import Dict, TYPE_CHECKING
 if TYPE_CHECKING:
-    from ..topology.node import Node
+    from ..topology.node import Node 
+
 
 from ..message import Message
 from ..protocol import StackProtocol
-
+import json
 
 class StaticRoutingMessage(Message):
     """Message used for communications between routing protocol instances.
@@ -57,11 +58,13 @@ class StaticRoutingProtocol(StackProtocol):
 
         assert dst not in self.forwarding_table
         self.forwarding_table[dst] = next_node
+        print('----------Next Hop-------------', next_node)
 
     def update_forwarding_rule(self, dst: str, next_node: str):
         """updates dst to map to next_node in forwarding table."""
 
         self.forwarding_table[dst] = next_node
+        print('----------Next Hop-------------', next_node)
 
     def push(self, dst: str, msg: "Message"):
         """Method to receive message from upper protocols.
@@ -76,10 +79,46 @@ class StaticRoutingProtocol(StackProtocol):
             Will invoke `push` method of lower protocol or network manager.
         """
 
+        #Compute the next hop here using our logic
+        #Pick the best possible nieghbor according to physical distance
+
+
+
         assert dst != self.own.name
-        dst = self.forwarding_table[dst]
+        #-----------print(self.own.all_pair_shortest_dist)
+        #dst = self.forwarding_table[dst]
+        dst =  self.custom_next_best_hop(self.own.name, dst)
         new_msg = StaticRoutingMessage(Enum, self.name, msg)
+        #print('--------------self.own.name------------', self.own.name)
+        #print('--------------dst------------', dst)
         self._push(dst=dst, msg=new_msg)
+
+    #--------------------------------------------------
+    def custom_next_best_hop(self, curr_node, dest):
+        all_pair_path = self.own.all_pair_shortest_dist
+        neighbors = self.own.neighbors
+        #Modified Greedy: Pick the best physical neighbor and generate entanglements through it
+        least_dist = 10e10
+        best_hop = None
+        nodewise_dest_distance = all_pair_path[dest]
+        nodewise_dest_distance = json.loads(json.dumps(nodewise_dest_distance))
+        print('Dist Matrix for destination node(',dest,') :  ')
+        print(nodewise_dest_distance)
+        print('Neighbors of current node(',curr_node,'):  ', neighbors)
+        for node in nodewise_dest_distance:
+            #print((node,neighbor_dict[node]))
+            if node in neighbors:
+                dist = nodewise_dest_distance[node]
+                if dist < least_dist:
+                    best_hop = node
+                    least_dist = dist
+        print()
+        print('---------Next Hop Calculation using Modified Greedy------------')
+        print('Curr Node: ', curr_node,', picked neighbor: ', best_hop, ', distance b/w picked neighbor and destination ', least_dist)
+        print('---------------------------------------------------------------')
+        print()
+        return best_hop
+    #--------------------------------------------------
 
     def pop(self, src: str, msg: "StaticRoutingMessage"):
         """Message to receive reservation messages.
