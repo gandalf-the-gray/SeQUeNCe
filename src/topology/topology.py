@@ -16,6 +16,7 @@ from ..components.optical_channel import QuantumChannel, ClassicalChannel
 
 #----------------------------
 import networkx as nx
+import matplotlib.pyplot as plt
 #----------------------------
 
 class Topology():
@@ -311,10 +312,39 @@ class Topology():
                 print('------------node-------------', type(node))
                 print('------------neighbor-------------', type(neighbor))
                 print('------------distance-------------', type(distance))
-                G.add_edge(node, neighbor, weight=distance)      
+                G.add_node(node)                
+                G.add_edge(node, neighbor, color='b', weight=distance)      
         return G
 
     def all_pair_shortest_dist(self):
         G = self.generate_nx_graph()
         return nx.floyd_warshall(G), G
+
+    def get_virtual_graph(self):
+        #Plotting virtual graph
+        nx_graph = self.generate_nx_graph()
+        for node in self.nodes.keys():
+            
+            #Check if this is middle node then skip it
+            if type(self.nodes[node]) == BSMNode:
+                continue
+            
+            #Check the memory of this node for existing entanglements
+            for info in self.nodes[node].resource_manager.memory_manager:
+                
+                if info.remote_node == None:
+                    continue
+                else:
+                    #print((node, info.remote_node))
+                    #This is a virtual neighbor
+                    nx_graph.add_edge(node, str(info.remote_node), color='r')
+        return nx_graph
+
+    def plot_graph(self, nx_graph):
+        colors = nx.get_edge_attributes(nx_graph,'color').values()
+        weights = nx.get_edge_attributes(nx_graph,'weight').values()
+
+        nx.draw(nx_graph, edge_color=colors, with_labels = True)
+        plt.show()
+
     #------------------------------------------------
