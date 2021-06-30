@@ -109,10 +109,13 @@ class ResourceReservationProtocol(StackProtocol):
         """
 
         reservation = Reservation(self.own.name, responder, start_time, end_time, memory_size, target_fidelity)
+        print(self.own.name)
+        print(responder)
         if self.schedule(reservation):
             msg = ResourceReservationMessage(RSVPMsgType.REQUEST, self.name, reservation)
             qcap = QCap(self.own.name)
             msg.qcaps.append(qcap)
+            #print('--------------------qcaps---------------- ', msg.qcaps[-1].node)
             self._push(dst=responder, msg=msg)
         else:
             msg = ResourceReservationMessage(RSVPMsgType.REJECT, self.name, reservation)

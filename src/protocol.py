@@ -77,7 +77,8 @@ class StackProtocol(Protocol):
     def _push(self, **kwargs):
         for protocol in self.lower_protocols:
             #print('self.name', self.name)
-            #print('-----------self.lower_protocols---------------', self.lower_protocols)
+            #print('-----------protocol---------------', protocol)
+            #print('--------------------qcaps---------------- ', kwargs["msg"].qcaps[-1].node)
             protocol.push(**kwargs)
 
     def _pop(self, **kwargs):

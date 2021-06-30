@@ -309,9 +309,9 @@ class Topology():
 
             for neighbor in self.graph_no_middle[node]:    
                 distance = self.graph_no_middle[node][neighbor]
-                print('------------node-------------', type(node))
-                print('------------neighbor-------------', type(neighbor))
-                print('------------distance-------------', type(distance))
+                #print('------------node-------------', type(node))
+                #print('------------neighbor-------------', type(neighbor))
+                #print('------------distance-------------', type(distance))
                 G.add_node(node)                
                 G.add_edge(node, neighbor, color='b', weight=distance)      
         return G
