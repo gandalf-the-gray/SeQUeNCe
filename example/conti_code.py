@@ -52,13 +52,13 @@ def set_parameters(topology: Topology):
 set_parameters(network_topo)
 
 # the start and end nodes may be edited as desired 
-node1 = "u"
-node2 = "v"
+node1 = "a"
+node2 = "c"
 nm = network_topo.nodes[node1].network_manager
-nm.request("v", start_time=2e12, end_time=10e12, memory_size=5, target_fidelity=0.9)
+nm.request(node2, start_time=2e12, end_time=10e12, memory_size=5, target_fidelity=0.9)
 
-nm2 = network_topo.nodes["s"].network_manager
-nm2.request("t", start_time=3e12, end_time=10e12, memory_size=5, target_fidelity=0.9)
+#nm2 = network_topo.nodes["a"].network_manager
+#nm2.request("e", start_time=3e12, end_time=10e12, memory_size=5, target_fidelity=0.9)
 
 tl.init()
 tl.run()
@@ -83,9 +83,9 @@ for info in network_topo.nodes[node1].resource_manager.memory_manager:
     print("{:6}\t{:15}\t{:9}\t{}".format(str(info.index), str(info.remote_node),
                                          str(info.fidelity), str(info.entangle_time * 1e-12)))
 
-print("s memories")
+print("A memories")
 print("Index:\tEntangled Node:\tFidelity:\tEntanglement Time:")
-for info in network_topo.nodes["s"].resource_manager.memory_manager:
+for info in network_topo.nodes["a"].resource_manager.memory_manager:
     print("{:6}\t{:15}\t{:9}\t{}".format(str(info.index), str(info.remote_node),
                                          str(info.fidelity), str(info.entangle_time * 1e-12)))
 
@@ -97,6 +97,9 @@ network_topo.plot_graph(nx_graph)
 
 #Obtaining the virtual graph
 virt_graph = network_topo.get_virtual_graph()
+for e in virt_graph.edges:
+    print("This is e---",e)
+
 network_topo.plot_graph(virt_graph)
 
 

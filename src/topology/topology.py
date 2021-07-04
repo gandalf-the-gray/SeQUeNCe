@@ -337,14 +337,17 @@ class Topology():
                 else:
                     #print((node, info.remote_node))
                     #This is a virtual neighbor
+                    print("Node, remote node-------",(node, info.remote_node))
                     nx_graph.add_edge(node, str(info.remote_node), color='r')
         return nx_graph
 
     def plot_graph(self, nx_graph):
-        colors = nx.get_edge_attributes(nx_graph,'color').values()
-        weights = nx.get_edge_attributes(nx_graph,'weight').values()
-
-        nx.draw(nx_graph, edge_color=colors, with_labels = True)
+        
+        nx.draw(nx_graph,with_labels=True)
         plt.show()
 
     #------------------------------------------------
+        """ colors = nx.get_edge_attributes(nx_graph,'color').values()
+        weights = nx.get_edge_attributes(nx_graph,'weight').values()
+
+        nx.draw(nx_graph, edge_color=colors, with_labels = True)"""

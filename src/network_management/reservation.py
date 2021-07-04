@@ -423,6 +423,7 @@ class ResourceReservationProtocol(StackProtocol):
                         if (isinstance(protocol, EntanglementSwappingB)
                                 and protocol.memory.name == memories_info[1].remote_memo):
                             return protocol
+                print("Node for entanglement swapping A--------------",self.own.name)
 
                 protocol = EntanglementSwappingA(None, "ESA.%s.%s" % (memories[0].name, memories[1].name),
                                                  memories[0], memories[1],

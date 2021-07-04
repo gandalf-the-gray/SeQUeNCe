@@ -1,83 +1,39 @@
 {
     "nodes": [
         {
-            "name": "w",
+            "name": "a",
             "type": "QuantumRouter"
         },
         {
-            "name": "u",
+            "name": "b",
             "type": "QuantumRouter"
         },
         {
-            "name": "v",
-            "type": "QuantumRouter"
-        },
-        {
-            "name": "s",
-            "type": "QuantumRouter"
-        },
-        {
-            "name": "t",
+            "name": "c",
             "type": "QuantumRouter"
         }
+     
     ],
     "qconnections": [
         {
-            "node1": "w",
-            "node2": "u",
+            "node1": "a",
+            "node2": "b",
             "attenuation": 1e-5,
             "distance": 500
         },
         {
-            "node1": "w",
-            "node2": "v",
-            "attenuation": 1e-5,
-            "distance": 500
-        },
-        {
-            "node1": "w",
-            "node2": "s",
-            "attenuation": 1e-5,
-            "distance": 500
-        },
-        {
-            "node1": "w",
-            "node2": "t",
-            "attenuation": 1e-5,
-            "distance": 500
-        },
-        {
-            "node1": "u",
-            "node2": "s",
-            "attenuation": 1e-5,
-            "distance": 500
-        },
-        {
-            "node1": "s",
-            "node2": "v",
-            "attenuation": 1e-5,
-            "distance": 500
-        },
-        {
-            "node1": "u",
-            "node2": "t",
-            "attenuation": 1e-5,
-            "distance": 500
-        },
-        {
-            "node1": "t",
-            "node2": "v",
+            "node1": "b",
+            "node2": "c",
             "attenuation": 1e-5,
             "distance": 500
         }
     ],
     "cchannels_table": {
         "type": "RT",
-        "labels": ["w", "u", "v", "s", "t"],
-        "table": [[0,   1e9, 1e9, 1e9, 1e9],
-                  [1e9, 0,   2e9, 1e9, 1e9],
-                  [1e9, 2e9, 0,   1e9, 1e9],
-                  [1e9, 1e9, 1e9, 0,   2e9],
-                  [1e9, 1e9, 1e9, 2e9, 0]]
+        "labels": ["a", "b", "c"],
+        "table": [[0,   1e9, 1e9],
+                  [1e9, 0,   2e9],
+                  [1e9, 2e9, 0]]
+                
     }
 }
