@@ -115,7 +115,7 @@ class ResourceReservationProtocol(StackProtocol):
             msg = ResourceReservationMessage(RSVPMsgType.REQUEST, self.name, reservation)
             qcap = QCap(self.own.name)
             msg.qcaps.append(qcap)
-            #print('--------------------qcaps---------------- ', msg.qcaps[-1].node)
+            print('--------------------push called ---------------- ', self.own.name)
             self._push(dst=responder, msg=msg)
         else:
             msg = ResourceReservationMessage(RSVPMsgType.REJECT, self.name, reservation)
@@ -137,7 +137,7 @@ class ResourceReservationProtocol(StackProtocol):
         Side Effects:
             May push/pop to lower/upper attached protocols (or network manager).
         """
-
+        print('--------------------pop called ---------------- ', self.own.name)
         if msg.msg_type == RSVPMsgType.REQUEST:
             assert self.own.timeline.now() < msg.reservation.start_time
             if self.schedule(msg.reservation):
@@ -223,51 +223,65 @@ class ResourceReservationProtocol(StackProtocol):
         # create rules for entanglement generation
         index = path.index(self.own.name)
         if index > 0:
-            def eg_rule_condition(memory_info: "MemoryInfo", manager: "MemoryManager"):
-                if memory_info.state == "RAW" and memory_info.index in memory_indices[:reservation.memory_size]:
-                    return [memory_info]
-                else:
-                    return []
+            
+            #To accept virtual links, we skip the generation step when a non physical neighbor is found
+            if path[index - 1] in self.own.neighbors:
 
-            def eg_rule_action(memories_info: List["MemoryInfo"]):
-                memories = [info.memory for info in memories_info]
-                memory = memories[0]
-                mid = self.own.map_to_middle_node[path[index - 1]]
-                protocol = EntanglementGenerationA(None, "EGA." + memory.name, mid, path[index - 1], memory)
-                return [protocol, [None], [None]]
+                #This will run for all nodes barring starting node
+                def eg_rule_condition(memory_info: "MemoryInfo", manager: "MemoryManager"):
+                    if memory_info.state == "RAW" and memory_info.index in memory_indices[:reservation.memory_size]:
+                        return [memory_info]
+                    else:
+                        return []
 
-            rule = Rule(10, eg_rule_action, eg_rule_condition)
-            rules.append(rule)
+                def eg_rule_action(memories_info: List["MemoryInfo"]):
+                    memories = [info.memory for info in memories_info]
+                    memory = memories[0]
+                    mid = self.own.map_to_middle_node[path[index - 1]]
+                    #print('---------EntanglementGenerationA----------for pair: ', (self.own.name, path[index - 1]))
+                    #print('---------Middle node for this----------', mid)
+                    protocol = EntanglementGenerationA(None, "EGA." + memory.name, mid, path[index - 1], memory)
+                    return [protocol, [None], [None]]
+                #print('---------EntanglementGenerationA----------for pair: ', (self.own.name, path[index - 1]))
+                rule = Rule(10, eg_rule_action, eg_rule_condition)
+                rules.append(rule)
 
         if index < len(path) - 1:
-            if index == 0:
-                def eg_rule_condition(memory_info: "MemoryInfo", manager: "MemoryManager"):
-                    if memory_info.state == "RAW" and memory_info.index in memory_indices:
-                        return [memory_info]
-                    else:
-                        return []
-            else:
-                def eg_rule_condition(memory_info: "MemoryInfo", manager: "MemoryManager"):
-                    if memory_info.state == "RAW" and memory_info.index in memory_indices[reservation.memory_size:]:
-                        return [memory_info]
-                    else:
-                        return []
 
-            def eg_rule_action(memories_info: List["MemoryInfo"]):
-                def req_func(protocols):
-                    for protocol in protocols:
-                        if isinstance(protocol,
-                                      EntanglementGenerationA) and protocol.other == self.own.name and protocol.rule.get_reservation() == reservation:
-                            return protocol
+            #To accept virtual links, we skip the generation step when a non physical neighbor is found
+            if path[index + 1] in self.own.neighbors:
+                #Starting node
+                if index == 0:
+                    def eg_rule_condition(memory_info: "MemoryInfo", manager: "MemoryManager"):
+                        if memory_info.state == "RAW" and memory_info.index in memory_indices:
+                            return [memory_info]
+                        else:
+                            return []
+                #second to second last node
+                else:
+                    def eg_rule_condition(memory_info: "MemoryInfo", manager: "MemoryManager"):
+                        if memory_info.state == "RAW" and memory_info.index in memory_indices[reservation.memory_size:]:
+                            return [memory_info]
+                        else:
+                            return []
 
-                memories = [info.memory for info in memories_info]
-                memory = memories[0]
-                mid = self.own.map_to_middle_node[path[index + 1]]
-                protocol = EntanglementGenerationA(None, "EGA." + memory.name, mid, path[index + 1], memory)
-                return [protocol, [path[index + 1]], [req_func]]
+                def eg_rule_action(memories_info: List["MemoryInfo"]):
+                    def req_func(protocols):
+                        for protocol in protocols:
+                            if isinstance(protocol,
+                                          EntanglementGenerationA) and protocol.other == self.own.name and protocol.rule.get_reservation() == reservation:
+                                return protocol
 
-            rule = Rule(10, eg_rule_action, eg_rule_condition)
-            rules.append(rule)
+                    memories = [info.memory for info in memories_info]
+                    memory = memories[0]
+                    mid = self.own.map_to_middle_node[path[index + 1]]
+                    #print('---------EntanglementGenerationA----------for pair: ', (self.own.name, path[index + 1]))
+                    #print('---------Middle node for this---------- ', mid)
+                    protocol = EntanglementGenerationA(None, "EGA." + memory.name, mid, path[index + 1], memory)
+                    return [protocol, [path[index + 1]], [req_func]]
+                #print('---------EntanglementGenerationA----------for pair: ', (self.own.name, path[index + 1]))
+                rule = Rule(10, eg_rule_action, eg_rule_condition)
+                rules.append(rule)
 
         # create rules for entanglement purification
         if index > 0:
@@ -377,14 +391,20 @@ class ResourceReservationProtocol(StackProtocol):
 
         else:
             _path = path[:]
+            print('In middle node for entanglement swapping: ', self.own.name)
             while _path.index(self.own.name) % 2 == 0:
+                print('Inside new path loop for : ', self.own.name)
+                print("Path inside reservation---------",_path)
+                print('_path.index(self.own.name): ' , _path.index(self.own.name))
                 new_path = []
                 for i, n in enumerate(_path):
                     if i % 2 == 0 or i == len(path) - 1:
                         new_path.append(n)
+                print('new_path: ', new_path)
                 _path = new_path
             _index = _path.index(self.own.name)
             left, right = _path[_index - 1], _path[_index + 1]
+            print('(left, right)', (left, right))
 
             def es_rule_conditionA(memory_info: "MemoryInfo", manager: "MemoryManager"):
                 if (memory_info.state == "ENTANGLED"
@@ -407,6 +427,11 @@ class ResourceReservationProtocol(StackProtocol):
                                 and info.remote_node == left
                                 and info.fidelity >= reservation.fidelity):
                             return [memory_info, info]
+                """else:
+                    for info in manager:
+                        print("This else")
+                        return [memory_info, info]"""
+                    
                 return []
 
             def es_rule_actionA(memories_info: List["MemoryInfo"]):
@@ -423,7 +448,6 @@ class ResourceReservationProtocol(StackProtocol):
                         if (isinstance(protocol, EntanglementSwappingB)
                                 and protocol.memory.name == memories_info[1].remote_memo):
                             return protocol
-                print("Node for entanglement swapping A--------------",self.own.name)
 
                 protocol = EntanglementSwappingA(None, "ESA.%s.%s" % (memories[0].name, memories[1].name),
                                                  memories[0], memories[1],

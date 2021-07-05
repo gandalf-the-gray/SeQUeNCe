@@ -156,7 +156,7 @@ class EntanglementGenerationA(EntanglementProtocol):
         """
 
         log.logger.info(self.own.name + " protocol start with partner {}".format(self.other))
-
+        print(self.own.name + " protocol start with partner {}".format(self.other))
         # to avoid start after remove protocol
         if self not in self.own.protocols:
             return
@@ -377,6 +377,7 @@ class EntanglementGenerationA(EntanglementProtocol):
 
     def _entanglement_succeed(self):
         log.logger.info(self.own.name + " successful entanglement of memory {}".format(self.memory))
+        print(self.own.name + " successful entanglement of memory with the node: ",self.other," {} ".format(self.memory))
         self.memory.entangled_memory["node_id"] = self.other
         self.memory.entangled_memory["memo_id"] = self.remote_memo_id
         self.memory.fidelity = self.memory.raw_fidelity
@@ -387,7 +388,7 @@ class EntanglementGenerationA(EntanglementProtocol):
         for event in self.scheduled_events:
             self.own.timeline.remove_event(event)
         log.logger.info(self.own.name + " failed entanglement of memory {}".format(self.memory))
-        
+        print(self.own.name + " failed entanglement of memory with the node: ",self.other," {} ".format(self.memory))
         self.update_resource_manager(self.memory, 'RAW')
 
 

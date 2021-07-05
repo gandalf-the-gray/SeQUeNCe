@@ -327,23 +327,30 @@ class Topology():
             
             #Check if this is middle node then skip it
             if type(self.nodes[node]) == BSMNode:
+                #print("In if-------",node)
                 continue
             
             #Check the memory of this node for existing entanglements
             for info in self.nodes[node].resource_manager.memory_manager:
                 
                 if info.remote_node == None:
+                    #print("Info.remote node-------------", info.remote_node)
                     continue
                 else:
                     #print((node, info.remote_node))
                     #This is a virtual neighbor
-                    print("Node, remote node-------",(node, info.remote_node))
+                    #print("Node, remote node-------",(node, info.remote_node))
                     nx_graph.add_edge(node, str(info.remote_node), color='r')
         return nx_graph
 
     def plot_graph(self, nx_graph):
+        colors = nx.get_edge_attributes(nx_graph,'color').values()
+        #print("Colors",colors)
+        weights = nx.get_edge_attributes(nx_graph,'weight').values()
+
+        nx.draw(nx_graph, edge_color=colors, with_labels = True)
         
-        nx.draw(nx_graph,with_labels=True)
+        #nx.draw(nx_graph,with_labels=True)
         plt.show()
 
     #------------------------------------------------

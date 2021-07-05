@@ -156,6 +156,9 @@ class EntanglementSwappingA(EntanglementProtocol):
         log.logger.info(self.own.name + " middle protocol start with ends {}, {}".format(self.left_protocol.own.name,
                                                                                          self.right_protocol.own.name))
 
+        print(self.own.name + " SWAPPING middle protocol start with ends {}, {}".format(self.left_protocol.own.name,
+                                                                                         self.right_protocol.own.name))
+
         assert self.left_memo.fidelity > 0 and self.right_memo.fidelity > 0
         assert self.left_memo.entangled_memory["node_id"] == self.left_protocol.own.name
         assert self.right_memo.entangled_memory["node_id"] == self.right_protocol.own.name
@@ -341,6 +344,7 @@ class EntanglementSwappingB(EntanglementProtocol):
 
     def start(self) -> None:
         log.logger.info(self.own.name + " end protocol start with partner {}".format(self.another.own.name))
+        print(self.own.name + " SWAPPING end protocol start with partner {}".format(self.another.own.name))
 
     def memory_expire(self, memory: "Memory") -> None:
         """Method to deal with expired memories.
