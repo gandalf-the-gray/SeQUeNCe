@@ -150,7 +150,21 @@ class Rule():
         """
 
         manager = self.rule_manager.get_memory_manager()
-        return self.condition(memory_info, manager)
+        
+        dummy_=self.condition(memory_info, manager)
+        
+        #print("RETURN FROM RULE MANAGER", self.own.name)
+        if len(self.protocols)!=0:
+            for pro in self.protocols:
+                print("RETURN FROM RULE MANAGER-protocol name", pro.name)
+                print("RETURN FROM RULE MANAGER-node name", pro.own.name)
+                print("Index Rule:\tEntangled Node:\tFidelity:\tEntanglement Time:")
+            for info in dummy_:
+                print("{:6}\t{:15}\t{:9}\t{}".format(str(info.index), str(info.remote_node),
+                                        str(info.fidelity), str(info.entangle_time * 1e-12)))
+
+   
+        return dummy_
 
     def set_reservation(self, reservation: "Reservation") -> None:
         self.reservation = reservation

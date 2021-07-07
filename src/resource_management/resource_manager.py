@@ -106,12 +106,17 @@ class ResourceManager():
         Returns:
             bool: if rule was loaded successfully.
         """
-
+        print("This is the rule------", rule)
         self.rule_manager.load(rule)
-
+        #print("Node in RESOURCE MANAGER---",self.own.name)
+        #print("Index LOAD:\tEntangled Node L:\tFidelity L:\tEntanglement Time L:")
+        
+            
         for memory_info in self.memory_manager:
+
             memories_info = rule.is_valid(memory_info)
             if len(memories_info) > 0:
+                
                 rule.do(memories_info)
                 for info in memories_info:
                     info.to_occupied()

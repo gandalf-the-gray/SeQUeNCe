@@ -226,7 +226,7 @@ class ResourceReservationProtocol(StackProtocol):
             
             #To accept virtual links, we skip the generation step when a non physical neighbor is found
             if path[index - 1] in self.own.neighbors:
-
+                #print("###",self.own.name)
                 #This will run for all nodes barring starting node
                 def eg_rule_condition(memory_info: "MemoryInfo", manager: "MemoryManager"):
                     if memory_info.state == "RAW" and memory_info.index in memory_indices[:reservation.memory_size]:
@@ -393,30 +393,41 @@ class ResourceReservationProtocol(StackProtocol):
             _path = path[:]
             print('In middle node for entanglement swapping: ', self.own.name)
             while _path.index(self.own.name) % 2 == 0:
-                print('Inside new path loop for : ', self.own.name)
-                print("Path inside reservation---------",_path)
-                print('_path.index(self.own.name): ' , _path.index(self.own.name))
+                #print('Inside new path loop for : ', self.own.name)
+                #print("Path inside reservation---------",_path)
+                #print('_path.index(self.own.name): ' , _path.index(self.own.name))
                 new_path = []
                 for i, n in enumerate(_path):
                     if i % 2 == 0 or i == len(path) - 1:
                         new_path.append(n)
-                print('new_path: ', new_path)
+                #print('new_path: ', new_path)
                 _path = new_path
             _index = _path.index(self.own.name)
             left, right = _path[_index - 1], _path[_index + 1]
             print('(left, right)', (left, right))
 
             def es_rule_conditionA(memory_info: "MemoryInfo", manager: "MemoryManager"):
+                #print("Node---",)
+                #print("STATE",memory_info.state)
+                #print("Index:\tEntangled Node:\tFidelity:\tEntanglement Time:")
+                #for info in [memory_info]:
+                #    print("{:6}\t{:15}\t{:9}\t{}".format(str(info.index), str(info.remote_node),
+                #                         str(info.fidelity), str(info.entangle_time * 1e-12)))
+                #print("INDEX,REMOTE NODE,FIDELITY, RESERVATION FIDELITY ",memory_info.index,memory_info.remote_node,memory_info.fidelity,reservation.fidelity)
                 if (memory_info.state == "ENTANGLED"
                         and memory_info.index in memory_indices
                         and memory_info.remote_node == left
                         and memory_info.fidelity >= reservation.fidelity):
+                    
                     for info in manager:
                         if (info.state == "ENTANGLED"
                                 and info.index in memory_indices
                                 and info.remote_node == right
                                 and info.fidelity >= reservation.fidelity):
+                            print("ES Condition matched A in IF----",self.own.name)
+                            print("(PAIR OF NODES)",(left,right))
                             return [memory_info, info]
+                    
                 elif (memory_info.state == "ENTANGLED"
                       and memory_info.index in memory_indices
                       and memory_info.remote_node == right
@@ -426,12 +437,16 @@ class ResourceReservationProtocol(StackProtocol):
                                 and info.index in memory_indices
                                 and info.remote_node == left
                                 and info.fidelity >= reservation.fidelity):
+                            print("ES Condition matched A in ELIF----",self.own.name)
+                            print("(PAIR OF NODES)",(left,right))
                             return [memory_info, info]
                 """else:
                     for info in manager:
                         print("This else")
                         return [memory_info, info]"""
-                    
+                print("ES Condition in A failed----",self.own.name)
+
+                print("(PAIR OF NODES)",(left,right))
                 return []
 
             def es_rule_actionA(memories_info: List["MemoryInfo"]):
@@ -455,19 +470,35 @@ class ResourceReservationProtocol(StackProtocol):
                 dsts = [info.remote_node for info in memories_info]
                 req_funcs = [req_func1, req_func2]
                 return protocol, dsts, req_funcs
-
+            #print("Node---",self.own.name)
+            #print("Index A:\tEntangled Node A:\tFidelity A:\tEntanglement Time A:")
+            #for info in self.own.resource_manager.memory_manager:
+            #    print("{:6}\t{:15}\t{:9}\t{}".format(str(info.index), str(info.remote_node),
+            #                             str(info.fidelity), str(info.entangle_time * 1e-12)))
             rule = Rule(10, es_rule_actionA, es_rule_conditionA)
             rules.append(rule)
 
             def es_rule_conditionB(memory_info: "MemoryInfo", manager: "MemoryManager") -> List["MemoryInfo"]:
+                #print("Node---", self.own.name)
+                #print("In RULE B")
+                #print("STATE",memory_info.state)
+
+                
+
                 if (memory_info.state == "ENTANGLED"
                         and memory_info.index in memory_indices
                         and memory_info.remote_node not in [left, right]
                         and memory_info.fidelity >= reservation.fidelity):
+                    #print("Node---",self.own.name)
+                    #print("Index B:\tEntangled Node:\tFidelity:\tEntanglement Time:")
+                    #for info in self.own.resource_manager.memory_manager:
+                    #    print("{:6}\t{:15}\t{:9}\t{}".format(str(info.index), str(info.remote_node),
+                    #                                str(info.fidelity), str(info.entangle_time * 1e-12)))
                     return [memory_info]
+
                 else:
                     return []
-
+            
             rule = Rule(10, es_rule_actionB, es_rule_conditionB)
             rules.append(rule)
 

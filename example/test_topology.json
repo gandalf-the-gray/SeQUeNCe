@@ -1,66 +1,65 @@
 {
     "nodes": [
         {
-            "name": "w",
+            "name": "a",
             "type": "QuantumRouter"
         },
         {
-            "name": "v",
+            "name": "b",
             "type": "QuantumRouter"
         },
         {
-            "name": "s",
+            "name": "c",
             "type": "QuantumRouter"
         },
         {
-            "name": "t",
+            "name": "d",
             "type": "QuantumRouter"
         },
         {
-            "name": "u",
+            "name": "e",
             "type": "QuantumRouter"
         }
-
+   
 
     ],
     "qconnections": [
         
         {
-            "node1": "t",
-            "node2": "u",
-            "attenuation": 1e-5,
-            "distance": 400
-        },
-        {
-            "node1": "w",
-            "node2": "v",
-            "attenuation": 1e-5,
-            "distance": 100
-        },
-        {
-            "node1": "w",
-            "node2": "s",
+            "node1": "a",
+            "node2": "b",
             "attenuation": 1e-5,
             "distance": 70
         },
         {
-            "node1": "t",
-            "node2": "v",
+            "node1": "b",
+            "node2": "c",
+            "attenuation": 1e-5,
+            "distance": 70
+        },
+        {
+            "node1": "c",
+            "node2": "d",
+            "attenuation": 1e-5,
+            "distance": 70
+        },
+        {
+            "node1": "d",
+            "node2": "e",
             "attenuation": 1e-5,
             "distance": 70
         }
-
-             
+       
 
     ],
     "cchannels_table": {
         "type": "RT",
-        "labels": ["w", "v", "s", "t","u"],
+        "labels": ["a", "b", "c", "d","e"],
         "table": [[0,   1e9, 1e9, 1e9,1e9],
                   [1e9, 0,   2e9, 1e9,1e9],
                   [1e9, 2e9, 0,   1e9,1e9],
                   [1e9, 1e9, 1e9, 0,1e9],
                   [1e9, 1e9, 1e9,1e9,0]
-                 ]
+    ]
     }
 }
