@@ -659,7 +659,7 @@ class Reservation():
     """
 
     def __init__(self, initiator: str, responder: str, start_time: int, end_time: int, memory_size: int,
-                 fidelity: float):
+                 fidelity: float, isvirtual:bool):#$$
         """Constructor for the reservation class.
 
         Args:
@@ -677,12 +677,13 @@ class Reservation():
         self.end_time = end_time
         self.memory_size = memory_size
         self.fidelity = fidelity
+        self.isvirtual=isvirtual#$$
         assert self.start_time < self.end_time
         assert self.memory_size > 0
 
     def __str__(self):
         return "Reservation: initiator=%s, responder=%s, start_time=%d, end_time=%d, memory_size=%d, target_fidelity=%.2f" % (
-            self.initiator, self.responder, self.start_time, self.end_time, self.memory_size, self.fidelity)
+            self.initiator, self.responder, self.start_time, self.end_time, self.memory_size, self.fidelity, self.isvirtual)#$$Not sure if need to add in return stmt
 
 
 class MemoryTimeCard():
@@ -751,6 +752,8 @@ class MemoryTimeCard():
         Will return index at which reservation can be inserted into memory reservation list.
         If no space found for reservation, will raise an exception.
 
+        
+
         Args:
             resv (Reservation): reservation to schedule.
 
@@ -760,7 +763,29 @@ class MemoryTimeCard():
         Raises:
             Exception: no valid index to insert reservation.
         """
+        physical_reservations=[]
+        for res in self.reservations:
+            if self.isvirtual:#$ or self.reservation.isvirtual
+                pass
+            else:
+                physical_reservations.append(res)
+        start, end = 0, len(physical_reservations) - 1
+        for res in physical_reservations:
+            while start <= end:
+                mid = (start + end) // 2
+                if physical_reservations[mid].start_time > res.end_time:
+                    end = mid - 1
+                elif physical_reservations[mid].end_time < res.start_time:
+                    start = mid + 1
+                elif max(physical_reservations[mid].start_time, res.start_time) <= min(physical_reservations[mid].end_time,
+                                                                                    res.end_time):
+                    return -1
+                else:
+                    raise Exception("Unexpected status")
+        return start
 
+        #$Previous code below for your reference
+        """
         start, end = 0, len(self.reservations) - 1
         while start <= end:
             mid = (start + end) // 2
@@ -774,6 +799,7 @@ class MemoryTimeCard():
             else:
                 raise Exception("Unexpected status")
         return start
+        """
 
 
 class QCap():

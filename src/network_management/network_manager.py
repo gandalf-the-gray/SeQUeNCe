@@ -130,7 +130,26 @@ class NetworkManager():
             Will invoke `push` method of -1 indexed protocol in `protocol_stack`.
         """
 
-        self.protocol_stack[-1].push(responder, start_time, end_time, memory_size, target_fidelity)
+        self.protocol_stack[-1].push(responder, start_time, end_time, memory_size, target_fidelity, isvirtual=False)#$$Shouldnt isvirtual be a _isvirtual?
+
+    def createvirtualrequest(self, responder: str, start_time: int, end_time: int, memory_size: int, target_fidelity: float) -> None:#$$
+        """Method to make an entanglement request.
+
+        Will defer request to top protocol in protocol stack.
+
+        Args:
+            responder (str): name of node to establish entanglement with.
+            start_time (int): simulation start time of entanglement.
+            end_time (int): simulation end time of entanglement.
+            memory_size (int): number of entangledd memory pairs to create.
+            target_fidelity (float): desired fidelity of entanglement.
+
+        Side Effects:
+            Will invoke `push` method of -1 indexed protocol in `protocol_stack`.
+        """
+
+        self.protocol_stack[-1].push(responder, start_time, end_time, memory_size, target_fidelity, isvirtual=True)#$$
+    
 
 
 def NewNetworkManager(owner: "QuantumRouter") -> "NetworkManager":
