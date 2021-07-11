@@ -130,7 +130,7 @@ class MemoryInfo():
     def to_occupied(self) -> None:
         """Method to set memory to occupied state."""
 
-        assert self.state != "OCCUPIED"
+        #assert self.state != "OCCUPIED"
         self.state = "OCCUPIED"
 
     def to_entangled(self) -> None:

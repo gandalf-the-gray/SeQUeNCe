@@ -104,6 +104,7 @@ class StaticRoutingProtocol(StackProtocol):
             visited = [qcap.node for qcap in msg.qcaps]
 
             dst =  self.custom_next_best_hop(self.own.name, dst, msg.reservation.memory_size, visited)
+
         #Else section will run during backward propagation
         else:
             #Return the prevous node of current node 
@@ -124,6 +125,7 @@ class StaticRoutingProtocol(StackProtocol):
         #if curr_node == dest:
         #    return dest
 
+        is_next_virtual = True
         all_pair_path = self.own.all_pair_shortest_dist
         neighbors = self.own.neighbors
         
@@ -157,6 +159,7 @@ class StaticRoutingProtocol(StackProtocol):
         
         print('Visited ----------------------', visited)
         if best_hop == None or virtual_neighbors[best_hop] < demand or ( best_hop in visited):
+            is_next_virtual = False
             least_dist = math.inf
             best_hop = None
             

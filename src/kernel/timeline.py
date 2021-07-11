@@ -110,6 +110,7 @@ class Timeline:
             # if not event.process.activation in log:
             #     log[event.process.activation] = 0
             # log[event.process.activation]+=1
+            #print('event execution begins at time= ', self.time)
             event.process.run()
             self.run_counter += 1
 

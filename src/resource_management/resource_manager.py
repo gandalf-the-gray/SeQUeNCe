@@ -106,17 +106,25 @@ class ResourceManager():
         Returns:
             bool: if rule was loaded successfully.
         """
-        print("This is the rule------", rule)
+#        print("This is the rule------", rule)
         self.rule_manager.load(rule)
-        #print("Node in RESOURCE MANAGER---",self.own.name)
+        print('resource manager to execute rule for node: ', self.owner.name)
         #print("Index LOAD:\tEntangled Node L:\tFidelity L:\tEntanglement Time L:")
         
-            
+        count = 0   
         for memory_info in self.memory_manager:
+            #print('This is resource manager looping through all memories of node: ', self.owner.name) 
 
+            
             memories_info = rule.is_valid(memory_info)
             if len(memories_info) > 0:
-                
+                if memory_info.index == 1 and self.owner.name == 'b':
+                    print('We see 1st memory of B')
+
+                count = count+1
+                if self.owner.name == 'b' and count == 1:
+                    print('Inside checking is_valid for rule for node b')
+
                 rule.do(memories_info)
                 for info in memories_info:
                     info.to_occupied()
@@ -179,6 +187,9 @@ class ResourceManager():
         # check if any rules have been met
         memo_info = self.memory_manager.get_info_by_memory(memory)
         for rule in self.rule_manager:
+            print('Called from update method in resource manager ---- rule---- from  node: ', self.owner.name)
+            if self.owner.name == 'd' and memo_info.remote_node == 'e':
+                print('Inside update method with remote node e')
             memories_info = rule.is_valid(memo_info)
             if len(memories_info) > 0:
                 rule.do(memories_info)
@@ -212,6 +223,13 @@ class ResourceManager():
             self.pending_protocols.append(protocol)
         msg = ResourceManagerMessage(ResourceManagerMsgType.REQUEST, protocol=protocol,
                                      req_condition_func=req_condition_func)
+
+        if self.owner.name == 'a' or self.owner.name == 'b':
+            print('Send Protocol Request at node: ', self.owner.name)
+            print('Requested Destination: ', req_dst)
+            print('protocol name: ', protocol.name)
+            print('ResourceManagerMsgType.REQUEST')
+
         self.owner.send_message(req_dst, msg)
 
     def received_message(self, src: str, msg: "ResourceManagerMessage") -> None:
@@ -226,6 +244,8 @@ class ResourceManager():
 
         if msg.msg_type is ResourceManagerMsgType.REQUEST:
             protocol = msg.req_condition_func(self.waiting_protocols)
+            
+            print(protocol)
             if protocol is not None:
                 protocol.set_others(msg.ini_protocol)
                 new_msg = ResourceManagerMessage(ResourceManagerMsgType.RESPONSE, protocol=msg.ini_protocol,
@@ -233,9 +253,13 @@ class ResourceManager():
                 self.owner.send_message(src, new_msg)
                 self.waiting_protocols.remove(protocol)
                 self.owner.protocols.append(protocol)
+                #print('#######Protocol Start method to be called##########')
+                #print('Protocol Name: ', protocol.name)
                 protocol.start()
                 return
 
+            print('######Here we send protocol with approval as false##########')
+            print('Reply to Protocol Name: ', msg.ini_protocol.name)
             new_msg = ResourceManagerMessage(ResourceManagerMsgType.RESPONSE, protocol=msg.ini_protocol,
                                              is_approved=False, paired_protocol=None)
             self.owner.send_message(src, new_msg)
@@ -255,6 +279,8 @@ class ResourceManager():
                     protocol.own = self.owner
                     protocol.start()
             else:
+                print('#######Protocol Not called##########')
+                print('Protocol Name: ', protocol.name)
                 protocol.rule.protocols.remove(protocol)
                 for memory in protocol.memories:
                     memory.detach(protocol)
