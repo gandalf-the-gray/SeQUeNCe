@@ -127,6 +127,8 @@ class ResourceManager():
 
                 rule.do(memories_info)
                 for info in memories_info:
+                    print('Update to Occupied')
+                    print(f'Shifting state to OCCUPIED for memory index :{info.index} for the node: {self.owner.name}')
                     info.to_occupied()
 
         return True
@@ -194,6 +196,8 @@ class ResourceManager():
             if len(memories_info) > 0:
                 rule.do(memories_info)
                 for info in memories_info:
+                    print('Update to Occupied')
+                    print(f'Shifting state to OCCUPIED for memory index :{info.index} for the node: {self.owner.name}')
                     info.to_occupied()
                 return
 

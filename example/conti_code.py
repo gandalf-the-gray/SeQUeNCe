@@ -78,7 +78,7 @@ tl.stop_time = 20e12#setting the simulation stop time, but ts not necessary that
                     #the simulation stops at the termination of last valid event, if valid events conitinue to be beyond this
                     #stop time then simulation stops at stop time.
 nm2 = network_topo.nodes["a"].network_manager
-nm2.request("e", start_time=5e12, end_time=20e12, memory_size=1, target_fidelity=0.8)
+nm2.request("g", start_time=5e12, end_time=20e12, memory_size=1, target_fidelity=0.8)
 
 tl.run()
 print('tl.time= ',tl.time)

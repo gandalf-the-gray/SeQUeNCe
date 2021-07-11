@@ -60,6 +60,7 @@ class MemoryManager():
         elif state == "OCCUPIED":
             info.to_occupied()
         elif state == "ENTANGLED":
+            print(f'To entangled called for the memory index {info.index} at the node {self.resource_manager.owner.name}')
             info.to_entangled()
         else:
             raise Exception("Unknown state '%s'" % state)
@@ -131,11 +132,17 @@ class MemoryInfo():
         """Method to set memory to occupied state."""
 
         #assert self.state != "OCCUPIED"
+        if self.memory.memory_array.owner.name == 'd': #and self.remote_node == 'a':
+            print(f'Reached the to_occupied for d and entanglement to created for memory index: {self.index}')
         self.state = "OCCUPIED"
 
     def to_entangled(self) -> None:
         """Method to set memory to entangled state."""
-
+        print(f'entanglement link to be created with: {self.memory.entangled_memory["node_id"]}')
+        
+        #print('self.memory.memory_array.owner:   ', self.memory.memory_array.owner)
+        if self.memory.memory_array.owner.name == 'd': #and self.remote_node == 'a':
+            print(f'Reached the to_entangled for d and entanglement to created for memory index: {self.index}')
         self.state = "ENTANGLED"
         self.remote_node = self.memory.entangled_memory["node_id"]
         self.remote_memo = self.memory.entangled_memory["memo_id"]

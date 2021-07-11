@@ -145,7 +145,6 @@ class ResourceReservationProtocol(StackProtocol):
                 msg.qcaps.append(qcap)
                 if self.own.name == msg.reservation.responder:
                     path = [qcap.node for qcap in msg.qcaps]
-                    print('Forward prop create_rules()')
                     rules = self.create_rules(path, reservation=msg.reservation)
                     self.load_rules(rules, msg.reservation)
                     new_msg = ResourceReservationMessage(RSVPMsgType.APPROVE, self.name, msg.reservation, path=path)
@@ -444,11 +443,13 @@ class ResourceReservationProtocol(StackProtocol):
                 #print('_path.index(self.own.name): ' , _path.index(self.own.name))
                 new_path = []
                 for i, n in enumerate(_path):
-                    if i % 2 == 0 or i == len(path) - 1:
+                    if i % 2 == 0 or i == len(_path) - 1:
                         new_path.append(n)
                 #print('new_path: ', new_path)
                 _path = new_path
             _index = _path.index(self.own.name)
+            print('new path: ', _path)
+            print('value of _index at mid swap node: ', _index)
             left, right = _path[_index - 1], _path[_index + 1]
             print('(left, right)', (left, right))
 
