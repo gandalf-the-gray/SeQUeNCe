@@ -130,7 +130,7 @@ class NetworkManager():
             Will invoke `push` method of -1 indexed protocol in `protocol_stack`.
         """
 
-        self.protocol_stack[-1].push(responder, start_time, end_time, memory_size, target_fidelity, isvirtual=False)#$$Shouldnt isvirtual be a _isvirtual?
+        self.protocol_stack[-1].push(responder, start_time, end_time, memory_size, target_fidelity,False)#$$Shouldnt isvirtual be a _isvirtual?
 
     def createvirtualrequest(self, responder: str, start_time: int, end_time: int, memory_size: int, target_fidelity: float) -> None:#$$
         """Method to make an entanglement request.
@@ -148,7 +148,7 @@ class NetworkManager():
             Will invoke `push` method of -1 indexed protocol in `protocol_stack`.
         """
 
-        self.protocol_stack[-1].push(responder, start_time, end_time, memory_size, target_fidelity, isvirtual=True)#$$
+        self.protocol_stack[-1].push(responder, start_time, end_time, memory_size, target_fidelity, True)#$$
     
 
 

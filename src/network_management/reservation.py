@@ -90,7 +90,7 @@ class ResourceReservationProtocol(StackProtocol):
         self.es_degradation = 0.95
         self.accepted_reservation = []
 
-    def push(self, responder: str, start_time: int, end_time: int, memory_size: int, target_fidelity: float):
+    def push(self, responder: str, start_time: int, end_time: int, memory_size: int, target_fidelity: float, isvirtual:bool):
         """Method to receive reservation requests from higher level protocol.
 
         Will evaluate request and determine if node can meet it.
@@ -108,7 +108,7 @@ class ResourceReservationProtocol(StackProtocol):
             May push/pop to lower/upper attached protocols (or network manager).
         """
 
-        reservation = Reservation(self.own.name, responder, start_time, end_time, memory_size, target_fidelity)
+        reservation = Reservation(self.own.name, responder, start_time, end_time, memory_size, target_fidelity, isvirtual)
         print(self.own.name)
         print(responder)
         if self.schedule(reservation):
@@ -718,13 +718,15 @@ class MemoryTimeCard():
         
         print('Trying to add reservation to this card with memory index: ', self.memory_index)
         pos = self.schedule_reservation(reservation)
-        """if pos >= 0:
+        if pos >= 0:
             print('Reservation addition successful for this card')
             self.reservations.insert(pos, reservation)
-            return True"""
-        print('Reservation addition successful for this card')
+            return True
+        else:
+            print('Reservation addition successful for this card')
+            return False
         self.reservations.insert(len(self.reservations), reservation)
-        return True
+        #return True
         """else:
             print('Reservation addition failed to this card')
             return False"""
@@ -765,7 +767,7 @@ class MemoryTimeCard():
         """
         physical_reservations=[]
         for res in self.reservations:
-            if self.isvirtual:#$ or self.reservation.isvirtual
+            if res.isvirtual:#$ or self.reservation.isvirtual
                 pass
             else:
                 physical_reservations.append(res)

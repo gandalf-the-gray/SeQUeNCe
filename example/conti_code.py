@@ -55,7 +55,7 @@ set_parameters(network_topo)
 node1 = "b"
 node2 = "d"
 nm = network_topo.nodes[node1].network_manager
-nm.request(node2, start_time=2e12, end_time=20e12, memory_size=1, target_fidelity=0.8)
+nm.createvirtualrequest(node2, start_time=2e12, end_time=20e12, memory_size=1, target_fidelity=0.8)
 
 #nm2 = network_topo.nodes["a"].network_manager
 #nm2.request("e", start_time=3e12, end_time=10e12, memory_size=5, target_fidelity=0.9)
@@ -78,7 +78,7 @@ tl.stop_time = 20e12#setting the simulation stop time, but ts not necessary that
                     #the simulation stops at the termination of last valid event, if valid events conitinue to be beyond this
                     #stop time then simulation stops at stop time.
 nm2 = network_topo.nodes["a"].network_manager
-nm2.request("g", start_time=5e12, end_time=20e12, memory_size=1, target_fidelity=0.8)
+nm2.createvirtualrequest("g", start_time=5e12, end_time=20e12, memory_size=1, target_fidelity=0.8)
 
 tl.run()
 print('tl.time= ',tl.time)
@@ -112,13 +112,21 @@ print("Index:\tEntangled Node:\tFidelity:\tEntanglement Time:")
 for info in network_topo.nodes["e"].resource_manager.memory_manager:
     print("{:6}\t{:15}\t{:9}\t{}".format(str(info.index), str(info.remote_node),
                                          str(info.fidelity), str(info.entangle_time * 1e-12)))
-"""
+
 print("F memories")
 print("Index:\tEntangled Node:\tFidelity:\tEntanglement Time:")
 for info in network_topo.nodes["f"].resource_manager.memory_manager:
     print("{:6}\t{:15}\t{:9}\t{}".format(str(info.index), str(info.remote_node),
                                          str(info.fidelity), str(info.entangle_time * 1e-12)))
-"""
+                                        
+print("G memories")
+print("Index:\tEntangled Node:\tFidelity:\tEntanglement Time:")
+for info in network_topo.nodes["g"].resource_manager.memory_manager:
+    print("{:6}\t{:15}\t{:9}\t{}".format(str(info.index), str(info.remote_node),
+                                         str(info.fidelity), str(info.entangle_time * 1e-12)))
+
+
+
 
 #Obtaining the physical graph
 nx_graph = network_topo.generate_nx_graph()
