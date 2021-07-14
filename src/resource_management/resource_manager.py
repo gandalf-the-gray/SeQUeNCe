@@ -111,25 +111,20 @@ class ResourceManager():
         print('resource manager to execute rule for node: ', self.owner.name)
         #print("Index LOAD:\tEntangled Node L:\tFidelity L:\tEntanglement Time L:")
         
-        count = 0   
+        #count = 0   
         for memory_info in self.memory_manager:
             #print('This is resource manager looping through all memories of node: ', self.owner.name) 
 
             
             memories_info = rule.is_valid(memory_info)
             if len(memories_info) > 0:
-                if memory_info.index == 1 and self.owner.name == 'b':
-                    print('We see 1st memory of B')
-
-                count = count+1
-                if self.owner.name == 'b' and count == 1:
-                    print('Inside checking is_valid for rule for node b')
-
                 rule.do(memories_info)
+                
                 for info in memories_info:
                     print('Update to Occupied')
-                    print(f'Shifting state to OCCUPIED for memory index :{info.index} for the node: {self.owner.name}')
+                    print(f'Shifting state to OCCUPIED for memory index  inside load:{info.index} for the node: {self.owner.name}')
                     info.to_occupied()
+                
 
         return True
 
@@ -185,6 +180,18 @@ class ResourceManager():
 
         if protocol in self.pending_protocols:
             self.pending_protocols.remove(protocol)
+         # check if any rules have been met
+        memo_info = self.memory_manager.get_info_by_memory(memory)
+        for rule in self.rule_manager:
+            memories_info = rule.is_valid(memo_info)
+            if len(memories_info) > 0:
+                rule.do(memories_info)
+                for info in memories_info:
+                    info.to_occupied()
+                return
+
+        self.owner.get_idle_memory(memo_info)
+        """
 
         # check if any rules have been met
         memo_info = self.memory_manager.get_info_by_memory(memory)
@@ -195,13 +202,16 @@ class ResourceManager():
             memories_info = rule.is_valid(memo_info)
             if len(memories_info) > 0:
                 rule.do(memories_info)
+                
                 for info in memories_info:
                     print('Update to Occupied')
-                    print(f'Shifting state to OCCUPIED for memory index :{info.index} for the node: {self.owner.name}')
+                    print(f'Shifting state to OCCUPIED for memory index inside update :{info.index} for the node: {self.owner.name}')
                     info.to_occupied()
+                
                 return
 
         self.owner.get_idle_memory(memo_info)
+        """
 
     def get_memory_manager(self):
         return self.memory_manager

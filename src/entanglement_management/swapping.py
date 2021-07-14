@@ -191,9 +191,11 @@ class EntanglementSwappingA(EntanglementProtocol):
 
         self.own.send_message(self.left_node, msg_l)
         self.own.send_message(self.right_node, msg_r)
-
+        if self.left_node=='a' and self.right_node=='c':
+            print("Updated to raw after swapping")
         self.update_resource_manager(self.left_memo, "RAW")
         self.update_resource_manager(self.right_memo, "RAW")
+        print("After updating to RAW")
 
     def success_probability(self) -> float:
         """A simple model for BSM success probability."""

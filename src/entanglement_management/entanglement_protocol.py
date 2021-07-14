@@ -74,6 +74,7 @@ class EntanglementProtocol(Protocol):
         Side Effects:
             May alter the state of `memory`.
         """
-
+        print("before updating state", state, self.name)
         self.own.resource_manager.update(self, memory, state)
+        print("After updating state", state, self.name, self.__dict__.values)
 

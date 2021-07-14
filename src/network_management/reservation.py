@@ -726,10 +726,7 @@ class MemoryTimeCard():
             print('Reservation addition successful for this card')
             return False
         self.reservations.insert(len(self.reservations), reservation)
-        #return True
-        """else:
-            print('Reservation addition failed to this card')
-            return False"""
+
         
     def remove(self, reservation: "Reservation") -> bool:
         """Method to remove a reservation.
@@ -754,7 +751,8 @@ class MemoryTimeCard():
         Will return index at which reservation can be inserted into memory reservation list.
         If no space found for reservation, will raise an exception.
 
-        
+        Overlapping of virtual link creation requests in memory reservation is possible, 
+        so we perform binary search to find the order of serialisation only for the physical link creation request.
 
         Args:
             resv (Reservation): reservation to schedule.
@@ -765,9 +763,10 @@ class MemoryTimeCard():
         Raises:
             Exception: no valid index to insert reservation.
         """
+        
         physical_reservations=[]
         for res in self.reservations:
-            if res.isvirtual:#$ or self.reservation.isvirtual
+            if res.isvirtual:
                 pass
             else:
                 physical_reservations.append(res)
@@ -785,23 +784,6 @@ class MemoryTimeCard():
                 else:
                     raise Exception("Unexpected status")
         return start
-
-        #$Previous code below for your reference
-        """
-        start, end = 0, len(self.reservations) - 1
-        while start <= end:
-            mid = (start + end) // 2
-            if self.reservations[mid].start_time > resv.end_time:
-                end = mid - 1
-            elif self.reservations[mid].end_time < resv.start_time:
-                start = mid + 1
-            elif max(self.reservations[mid].start_time, resv.start_time) <= min(self.reservations[mid].end_time,
-                                                                                resv.end_time):
-                return -1
-            else:
-                raise Exception("Unexpected status")
-        return start
-        """
 
 
 class QCap():

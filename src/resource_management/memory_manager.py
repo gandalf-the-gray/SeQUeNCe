@@ -132,6 +132,10 @@ class MemoryInfo():
         """Method to set memory to occupied state."""
 
         #assert self.state != "OCCUPIED"
+        #if virtual link and protocol is "entanglement swap" and state=="ENTANGLED" and isfirstreq, call toentangled 
+        #else info.to_occupied()
+        #self.
+
         if self.memory.memory_array.owner.name == 'd': #and self.remote_node == 'a':
             print(f'Reached the to_occupied for d and entanglement to created for memory index: {self.index}')
         self.state = "OCCUPIED"
