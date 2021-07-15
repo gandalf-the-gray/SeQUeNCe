@@ -35,14 +35,6 @@
         {
             "name": "i",
             "type": "QuantumRouter"
-        },
-        {
-            "name": "j",
-            "type": "QuantumRouter"
-        },
-        {
-            "name": "k",
-            "type": "QuantumRouter"
         }
 
    
@@ -97,36 +89,21 @@
             "node2": "i",
             "attenuation": 1e-5,
             "distance": 70
-        },
-        {
-            "node1": "i",
-            "node2": "j",
-            "attenuation": 1e-5,
-            "distance": 70
-        },
-        {
-            "node1": "j",
-            "node2": "k",
-            "attenuation": 1e-5,
-            "distance": 70
-        }
-       
+        }       
 
     ],
     "cchannels_table": {
         "type": "RT",
-        "labels": ["a", "b", "c", "d","e", "f", "g","h","i","j","k"],
-        "table": [[0,   1e9, 1e9, 1e9,1e9, 1e9,1e9,1e9,1e9,1e9,1e9],
-                  [1e9, 0,   2e9, 1e9,1e9, 1e9,1e9,1e9,1e9,1e9,1e9],
-                  [1e9, 2e9, 0,   1e9,1e9, 1e9,1e9,1e9,1e9,1e9,1e9],
-                  [1e9, 1e9, 1e9, 0,1e9, 1e9,1e9,1e9,1e9,1e9,1e9],
-                  [1e9, 1e9, 1e9,1e9,0, 1e9,1e9,1e9,1e9,1e9,1e9],
-                  [1e9, 1e9, 1e9, 1e9,1e9, 0,1e9,1e9,1e9,1e9,1e9],
-                  [1e9, 1e9, 1e9,1e9,1e9, 1e9,0,1e9,1e9,1e9,1e9],
-                  [1e9, 1e9, 1e9,1e9,1e9, 1e9,1e9,0,1e9,1e9,1e9],
-                  [1e9, 1e9, 1e9,1e9,1e9, 1e9,1e9,1e9,0,1e9,1e9],
-                  [1e9, 1e9, 1e9,1e9,1e9, 1e9,1e9,1e9,1e9,0,1e9],
-                  [1e9, 1e9, 1e9,1e9,1e9, 1e9,1e9,1e9,1e9,1e9,0]
+        "labels": ["a", "b", "c", "d","e", "f", "g","h","i"],
+        "table": [[0,   1e9, 1e9, 1e9,1e9, 1e9,1e9,1e9,1e9],
+                  [1e9, 0,   2e9, 1e9,1e9, 1e9,1e9,1e9,1e9],
+                  [1e9, 2e9, 0,   1e9,1e9, 1e9,1e9,1e9,1e9],
+                  [1e9, 1e9, 1e9, 0,1e9, 1e9,1e9,1e9,1e9],
+                  [1e9, 1e9, 1e9,1e9,0, 1e9,1e9,1e9,1e9],
+                  [1e9, 1e9, 1e9, 1e9,1e9, 0,1e9,1e9,1e9],
+                  [1e9, 1e9, 1e9,1e9,1e9, 1e9,0,1e9,1e9],
+                  [1e9, 1e9, 1e9,1e9,1e9, 1e9,1e9,0,1e9],
+                  [1e9, 1e9, 1e9,1e9,1e9, 1e9,1e9,1e9,0],
                 ]
     }
 }

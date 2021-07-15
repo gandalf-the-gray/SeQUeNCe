@@ -35,7 +35,10 @@ if __name__ == "__main__":
     @timeit_wrapper
     def run():
         sys.stdout = open(os.devnull, 'w')
-        subprocess.call(['./conti_code.py','0.7'])
+        #sys.argv = ['0.7']
+        subprocess.call([sys.executable, 'conti_code.py', '0.7'])
+        #exec(script)
+        #subprocess.call([script,'0.7'])
         #exec(open(script).read())
         sys.stdout = sys.__stdout__
 

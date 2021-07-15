@@ -134,11 +134,11 @@ class Rule():
         protocol, req_dsts, req_condition_funcs = self.action(memories_info)
         protocol.rule = self
         self.protocols.append(protocol)
-        print()
+        """print()
         print()
         print('Protocol being currently  attached to memory: ', protocol.name)
         print()
-        print()
+        print()"""
         for info in memories_info:
             info.memory.detach(info.memory.memory_array)
             info.memory.attach(protocol)
@@ -157,11 +157,11 @@ class Rule():
 
         manager = self.rule_manager.get_memory_manager()
         
-        if memory_info.index == 1 and self.rule_manager.resource_manager.owner.name == 'b':
-            print('We are in checking the is_valid for 1st memory of B')
+        """if memory_info.index == 1 and self.rule_manager.resource_manager.owner.name == 'b':
+            print('We are in checking the is_valid for 1st memory of B')"""
 
         dummy_=self.condition(memory_info, manager)  #----------dummy_ will either be 0 or 2
-        print(self)
+        """print(self)
         print('memory_info is being compared with memory manager for: ', self.rule_manager.resource_manager.owner.name)
         print('dummy_ size: ', len(dummy_))
         print('dummy_ begins--------------')
@@ -175,7 +175,7 @@ class Rule():
         print("{:6}\t{:15}\t{:9}\t{}".format(str(memory_info.index), str(memory_info.remote_node),
                                                  str(memory_info.fidelity), str(memory_info.entangle_time * 1e-12)))
 
-        """print('protocols list size: ', len(self.protocols))
+        print('protocols list size: ', len(self.protocols))
         for pro in self.protocols:
             #p = re.compile('ESA*')
             #if p.match(str(pro.name)):

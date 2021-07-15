@@ -162,7 +162,7 @@ class Timeline:
                 else:
                     stop_time = self.ns_to_human_time(self.stop_time / 1e3)
                 process_bar = f'\rexecution time: {exe_time};     simulation time: {sim_time} / {stop_time}'
-                print(f'{process_bar}', end="\r")
+                #print(f'{process_bar}', end="\r")
                 stdout.flush()
                 sleep(3)
 

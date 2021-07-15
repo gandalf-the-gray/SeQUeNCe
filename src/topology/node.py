@@ -168,7 +168,7 @@ class BSMNode(Node):
                     return
 
         # if we reach here, we didn't successfully receive the message in any protocol
-        print(src, msg)
+        #print(src, msg)
         raise Exception("Unkown protocol")
 
     def receive_qubit(self, src: str, qubit):
@@ -539,7 +539,7 @@ class QKDNode(Node):
                 return
 
         # if we reach here, we didn't successfully receive the message in any protocol
-        print(self.protocols)
+        #print(self.protocols)
         raise Exception("Message received for unknown protocol '{}' on node {}".format(msg.owner_type, self.name))
 
     def receive_qubit(self, src: str, qubit) -> None:

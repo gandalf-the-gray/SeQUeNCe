@@ -106,9 +106,9 @@ class ResourceManager():
         Returns:
             bool: if rule was loaded successfully.
         """
-#        print("This is the rule------", rule)
+        #print("This is the rule------", rule)
         self.rule_manager.load(rule)
-        print('resource manager to execute rule for node: ', self.owner.name)
+        #print('resource manager to execute rule for node: ', self.owner.name)
         #print("Index LOAD:\tEntangled Node L:\tFidelity L:\tEntanglement Time L:")
         
         #count = 0   
@@ -121,8 +121,8 @@ class ResourceManager():
                 rule.do(memories_info)
                 
                 for info in memories_info:
-                    print('Update to Occupied')
-                    print(f'Shifting state to OCCUPIED for memory index  inside load:{info.index} for the node: {self.owner.name}')
+                    #print('Update to Occupied')
+                    #print(f'Shifting state to OCCUPIED for memory index  inside load:{info.index} for the node: {self.owner.name}')
                     info.to_occupied()
                 
 
@@ -238,11 +238,11 @@ class ResourceManager():
         msg = ResourceManagerMessage(ResourceManagerMsgType.REQUEST, protocol=protocol,
                                      req_condition_func=req_condition_func)
 
-        if self.owner.name == 'a' or self.owner.name == 'b':
+        """if self.owner.name == 'a' or self.owner.name == 'b':
             print('Send Protocol Request at node: ', self.owner.name)
             print('Requested Destination: ', req_dst)
             print('protocol name: ', protocol.name)
-            print('ResourceManagerMsgType.REQUEST')
+            print('ResourceManagerMsgType.REQUEST')"""
 
         self.owner.send_message(req_dst, msg)
 
@@ -259,7 +259,7 @@ class ResourceManager():
         if msg.msg_type is ResourceManagerMsgType.REQUEST:
             protocol = msg.req_condition_func(self.waiting_protocols)
             
-            print(protocol)
+            #print(protocol)
             if protocol is not None:
                 protocol.set_others(msg.ini_protocol)
                 new_msg = ResourceManagerMessage(ResourceManagerMsgType.RESPONSE, protocol=msg.ini_protocol,
@@ -272,8 +272,8 @@ class ResourceManager():
                 protocol.start()
                 return
 
-            print('######Here we send protocol with approval as false##########')
-            print('Reply to Protocol Name: ', msg.ini_protocol.name)
+            """print('######Here we send protocol with approval as false##########')
+            print('Reply to Protocol Name: ', msg.ini_protocol.name)"""
             new_msg = ResourceManagerMessage(ResourceManagerMsgType.RESPONSE, protocol=msg.ini_protocol,
                                              is_approved=False, paired_protocol=None)
             self.owner.send_message(src, new_msg)
@@ -293,8 +293,8 @@ class ResourceManager():
                     protocol.own = self.owner
                     protocol.start()
             else:
-                print('#######Protocol Not called##########')
-                print('Protocol Name: ', protocol.name)
+                #print('#######Protocol Not called##########')
+                #print('Protocol Name: ', protocol.name)
                 protocol.rule.protocols.remove(protocol)
                 for memory in protocol.memories:
                     memory.detach(protocol)

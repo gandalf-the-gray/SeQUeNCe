@@ -13,7 +13,7 @@ if __name__ == "__main__":
     '''
     
     parser = argparse.ArgumentParser()
-    parser.add_argument('config_file')
+    parser.add_argument('./example/test_topology.json')
     parser.add_argument('-m', dest='draw_middle', action='store_true')
 
     args = parser.parse_args()
