@@ -51,7 +51,7 @@ class RuleManager():
         """
 
         # binary search for inserting rule
-        print('rule manager to load rule for node: ', self.resource_manager.owner.name)
+        #print('rule manager to load rule for node: ', self.resource_manager.owner.name)
         rule.set_rule_manager(self)
         left, right = 0, len(self.rules) - 1
         while left <= right:

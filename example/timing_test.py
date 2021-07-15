@@ -3,6 +3,7 @@ import statistics as stats
 import sys
 import time
 import subprocess
+import numpy as np
 
 
 runtimes = []
@@ -25,18 +26,24 @@ if __name__ == "__main__":
     '''
 
     script = sys.argv[1]
+    current_iter=0
     try:
-        num_trials = int(sys.argv[2])
+        
+        fidelity=[x for x in np.arange(0.5,0.68,0.03)]
+        num_trials = len(fidelity)
+        
 
         
     except IndexError:
         num_trials = 5
+        
 
     @timeit_wrapper
-    def run():
+    def run(fidelity):
         sys.stdout = open(os.devnull, 'w')
         #sys.argv = ['0.7']
-        subprocess.call([sys.executable, 'conti_code.py', '0.7'])
+        subprocess.call([sys.executable, 'conti_code.py', str(fidelity)])
+        #current_iter=current_iter+1
         #exec(script)
         #subprocess.call([script,'0.7'])
         #exec(open(script).read())
@@ -46,7 +53,7 @@ if __name__ == "__main__":
 
     for i in range(num_trials):
         print("\trunning trial number {} ... ".format(i + 1), end='', flush=True)
-        run()
+        run(fidelity[i])
         print("ran in {}s".format(runtimes[-1]))
 
     print("mean time: {}".format(stats.mean(runtimes)))
