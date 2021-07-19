@@ -35,7 +35,15 @@ if __name__ == "__main__":
         fidelityIntermediate=[x for x in np.arange(0.7,0.71,0.03)]
         fidelityE2E = [x for x in np.arange(0.5,0.51,0.03)]
         num_trials = len(fidelityE2E)*len(fidelityIntermediate)
-        destinations = ['c','d','e','f','g','h','i','j','k']
+        
+        #Change this
+        #For Time vs Distance
+        #destinations = ['c','d','e','f','g','h','i','j','k']
+        #attenuation = [1e-3]
+
+        #For Time vs Attenuation
+        destinations = ['i']
+        attenuation = [10**(-x) for x in range(1, 5, 1)]
 
         
     except IndexError:
@@ -43,9 +51,9 @@ if __name__ == "__main__":
         
 
     @timeit_wrapper
-    def run(fidelityInt, fidelityE2E, isvirtual ,dest):
+    def run(fidelityInt, fidelityE2E, isvirtual ,dest, attenuation):
         sys.stdout = open(os.devnull, 'w')
-        retval = subprocess.check_output([sys.executable, 'conti_code.py', str(fidelityInt), str(fidelityE2E) , str(isvirtual), str(dest)]).decode(sys.stdout.encoding)
+        retval = subprocess.check_output([sys.executable, 'conti_code.py', str(fidelityInt), str(fidelityE2E) , str(isvirtual), str(dest), str(attenuation)]).decode(sys.stdout.encoding)
         sys.stdout = sys.__stdout__
         return retval
 
@@ -56,24 +64,27 @@ if __name__ == "__main__":
     distance_from_src = []
 
     #for i in range(num_trials):
-    for f_i in fidelityIntermediate:
-        for f_e2e in fidelityE2E:
-            for dest in destinations:
-                distance_from_src.append(destinations.index(dest))
-                print(f"Running for Destination: {dest}  intermediate fidelity value {round(f_i, 3)} and E2E fidelity value {round(f_e2e, 3)} \n", end='', flush=True)
-                print('Running for Physical')
-                retvalPhy = run(f_i, f_e2e, 'False' ,dest)
-                print('From retval ---- ', retvalPhy)
-                Physical_Ent_Time.append(float(ast.literal_eval(retvalPhy)[0]))
-                print(Physical_Ent_Time)
-               
+    for dest in destinations:
+        for f_i in fidelityIntermediate:
+            for f_e2e in fidelityE2E:            
+                for atten in attenuation:
+                    distance_from_src.append(destinations.index(dest))
+                    print(f"Running for Destination: {dest}  intermediate fidelity value {round(f_i, 3)} and E2E fidelity value {round(f_e2e, 3)} and attenuation {atten} \n", end='', flush=True)
+                    print('Running for Physical')
+                    retvalPhy = run(f_i, f_e2e, 'False' ,dest, atten)
+                    print('From retval ---- ', retvalPhy)
+                    Physical_Ent_Time.append(float(ast.literal_eval(retvalPhy)[0]))
+                    print(Physical_Ent_Time)
+                   
 
-                print('Running for Virtual')
-                retvalVirt = run(f_i, f_e2e, 'True' ,dest)
-                Virtual_Ent_Time.append(float(ast.literal_eval(retvalVirt)[0]))
-                print(Virtual_Ent_Time)
+                    print('Running for Virtual')
+                    retvalVirt = run(f_i, f_e2e, 'True' ,dest, atten)
+                    Virtual_Ent_Time.append(float(ast.literal_eval(retvalVirt)[0]))
+                    print(Virtual_Ent_Time)
 
-                print('From retval ---- ', retvalVirt)
+                    print('From retval ---- ', retvalVirt)
+        
+        
         #print("ran in {}s".format(runtimes[-1]))
 
     #print("mean time: {}".format(stats.mean(runtimes)))
@@ -83,12 +94,41 @@ if __name__ == "__main__":
 
 fig, ax = plt.subplots()
 
+"""
+#Change this
+#For change in distance from source
 ax.plot(distance_from_src, Physical_Ent_Time, color = 'blue' ,label = r'Time for physical')
 ax.plot(distance_from_src, Virtual_Ent_Time, color = 'red', label = r'Time for virtual')
 
 ax.legend(loc = 'upper left')
 plt.xlabel('Distance From Source')
 plt.ylabel('Entanglement Time')
+plt.show()
+
+"""
+print(attenuation)
+#For change in attenuation
+ax.plot(attenuation, Physical_Ent_Time, color = 'blue' ,label = r'Time for physical')
+ax.plot(attenuation, Virtual_Ent_Time, color = 'red', label = r'Time for virtual')
+
+ax.set_xscale('log')
+ax.legend(loc = 'upper left')
+plt.xlabel('Attenuation')
+plt.ylabel('Entanglement Time')
+plt.show()
+
+
+
+print(max_targt_fidelity_physical)
+print(max_target_fidelity_virtual)
+
+ax.plot(distance_from_src, fidelity_achieved_physical, color = 'blue' ,label = r'Fidelity for physical')
+ax.plot(distance_from_src, fidelity_achieved_virtual, color = 'red', label = r'Fidelity for virtual')
+
+ax.set_xscale('log')
+ax.legend(loc = 'upper left')
+plt.xlabel('Distance From Source')
+plt.ylabel('Entanglement Fidelity')
 plt.show()
 
 

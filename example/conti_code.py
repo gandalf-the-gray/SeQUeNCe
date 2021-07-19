@@ -14,7 +14,7 @@ tl = Timeline(4e12)
 network_topo = Topology("network_topo", tl)
 network_topo.load_config(network_config)
 
-def set_parameters(topology: Topology):
+def set_parameters(topology: Topology, attenuation):
     # set memory parameters
     MEMO_FREQ = 2e3
     MEMO_EXPIRE = 0
@@ -39,16 +39,22 @@ def set_parameters(topology: Topology):
         
     # set entanglement swapping parameters
     #SWAP_SUCC_PROB = 0.90
-    SWAP_SUCC_PROB = 0.99
+    #SWAP_SUCC_PROB = 0.99
+    SWAP_SUCC_PROB = 0.95
+    
     #SWAP_DEGRADATION = 0.99
-    SWAP_DEGRADATION = 1
+    #SWAP_DEGRADATION = 1
+    SWAP_DEGRADATION = 0.99
+    
     for node in topology.get_nodes_by_type("QuantumRouter"):
         node.network_manager.protocol_stack[1].set_swapping_success_rate(SWAP_SUCC_PROB)
         node.network_manager.protocol_stack[1].set_swapping_degradation(SWAP_DEGRADATION)
         
     # set quantum channel parameters
     #ATTENUATION = 1e-5
-    ATTENUATION = 1e-10
+    #ATTENUATION = 1e-10
+    #ATTENUATION = 1e-8
+    ATTENUATION = attenuation
     QC_FREQ = 1e11
     for qc in topology.qchannels:
         qc.attenuation = ATTENUATION
@@ -62,8 +68,9 @@ if __name__ == "__main__":
     fidelityE2E = float(sys.argv[2])
     isvirtual = str(sys.argv[3])
     dest = str(sys.argv[4])
+    attenuation = float(sys.argv[5])
     
-    set_parameters(network_topo)
+    set_parameters(network_topo, attenuation)
 
     if isvirtual == 'True':
         node1 = "a"
