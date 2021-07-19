@@ -38,12 +38,12 @@ if __name__ == "__main__":
         
         #Change this
         #For Time vs Distance
-        #destinations = ['c','d','e','f','g','h','i','j','k']
-        #attenuation = [1e-3]
+        destinations = ['c','d','e','f','g','h','i','j','k']
+        attenuation = [1e-3]
 
         #For Time vs Attenuation
-        destinations = ['i']
-        attenuation = [10**(-x) for x in range(1, 5, 1)]
+        #destinations = ['i']
+        #attenuation = [10**(-x) for x in range(1, 5, 1)]
 
         
     except IndexError:
@@ -62,6 +62,9 @@ if __name__ == "__main__":
     Physical_Ent_Time = []
     Virtual_Ent_Time = []
     distance_from_src = []
+    fidelity_physical = []
+    fidelity_virtual = []
+
 
     #for i in range(num_trials):
     for dest in destinations:
@@ -74,12 +77,14 @@ if __name__ == "__main__":
                     retvalPhy = run(f_i, f_e2e, 'False' ,dest, atten)
                     print('From retval ---- ', retvalPhy)
                     Physical_Ent_Time.append(float(ast.literal_eval(retvalPhy)[0]))
+                    fidelity_physical.append(float(ast.literal_eval(retvalPhy)[1]))
                     print(Physical_Ent_Time)
                    
 
                     print('Running for Virtual')
                     retvalVirt = run(f_i, f_e2e, 'True' ,dest, atten)
                     Virtual_Ent_Time.append(float(ast.literal_eval(retvalVirt)[0]))
+                    fidelity_virtual.append(float(ast.literal_eval(retvalVirt)[1]))
                     print(Virtual_Ent_Time)
 
                     print('From retval ---- ', retvalVirt)
@@ -105,7 +110,7 @@ plt.xlabel('Distance From Source')
 plt.ylabel('Entanglement Time')
 plt.show()
 
-"""
+
 print(attenuation)
 #For change in attenuation
 ax.plot(attenuation, Physical_Ent_Time, color = 'blue' ,label = r'Time for physical')
@@ -116,17 +121,12 @@ ax.legend(loc = 'upper left')
 plt.xlabel('Attenuation')
 plt.ylabel('Entanglement Time')
 plt.show()
+"""
 
+ax.plot(distance_from_src, fidelity_physical, alpha= 0.5,  color = 'red' ,label = r'Fidelity for physical')
+ax.plot(distance_from_src, fidelity_virtual, '--' , alpha= 0.5, color = 'black', label = r'Fidelity for virtual')
 
-
-print(max_targt_fidelity_physical)
-print(max_target_fidelity_virtual)
-
-ax.plot(distance_from_src, fidelity_achieved_physical, color = 'blue' ,label = r'Fidelity for physical')
-ax.plot(distance_from_src, fidelity_achieved_virtual, color = 'red', label = r'Fidelity for virtual')
-
-ax.set_xscale('log')
-ax.legend(loc = 'upper left')
+ax.legend(loc = 'upper right')
 plt.xlabel('Distance From Source')
 plt.ylabel('Entanglement Fidelity')
 plt.show()
