@@ -227,6 +227,7 @@ class QuantumRouter(Node):
         #-------------------------------------
         self.all_pair_shortest_dist = None
         self.neighbors = None
+        self.random_seed = None
         #-------------------------------------
 
     #--------------------------------------------------------------------------

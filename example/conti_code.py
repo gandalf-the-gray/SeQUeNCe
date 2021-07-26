@@ -14,7 +14,7 @@ tl = Timeline(4e12)
 network_topo = Topology("network_topo", tl)
 network_topo.load_config(network_config)
 
-def set_parameters(topology: Topology, attenuation):
+def set_parameters(topology: Topology, attenuation, seed):
     # set memory parameters
     MEMO_FREQ = 2e3
     MEMO_EXPIRE = 0
@@ -22,6 +22,7 @@ def set_parameters(topology: Topology, attenuation):
     MEMO_FIDELITY = 0.9349367588934053
     #MEMO_FIDELITY = 0.99
     for node in topology.get_nodes_by_type("QuantumRouter"):
+        node.random_seed = seed
         node.memory_array.update_memory_params("frequency", MEMO_FREQ)
         node.memory_array.update_memory_params("coherence_time", MEMO_EXPIRE)
         node.memory_array.update_memory_params("efficiency", MEMO_EFFICIENCY)
@@ -41,6 +42,7 @@ def set_parameters(topology: Topology, attenuation):
     #SWAP_SUCC_PROB = 0.90
     #SWAP_SUCC_PROB = 0.99
     SWAP_SUCC_PROB = 0.95
+    #SWAP_SUCC_PROB = 0.50
     
     #SWAP_DEGRADATION = 0.99
     #SWAP_DEGRADATION = 1
@@ -69,8 +71,9 @@ if __name__ == "__main__":
     isvirtual = str(sys.argv[3])
     dest = str(sys.argv[4])
     attenuation = float(sys.argv[5])
+    seed = int(sys.argv[6])
     
-    set_parameters(network_topo, attenuation)
+    set_parameters(network_topo, attenuation, seed)
 
     if isvirtual == 'True':
         node1 = "a"

@@ -15,7 +15,9 @@ from enum import Enum, auto
 from typing import TYPE_CHECKING
 from functools import lru_cache
 
-from numpy.random import random
+#from numpy.random import random 
+import numpy as np
+from random import random
 
 if TYPE_CHECKING:
     from ..components.memory import Memory
@@ -163,7 +165,21 @@ class EntanglementSwappingA(EntanglementProtocol):
         assert self.left_memo.entangled_memory["node_id"] == self.left_protocol.own.name
         assert self.right_memo.entangled_memory["node_id"] == self.right_protocol.own.name
 
-        if random() < self.success_probability():
+        #np.random.seed(self.own.random_seed)
+        #x_rand = np.random.rand()
+        #rand = np.random.random_sample(5)
+        #np.random.shuffle(rand)
+        #x_rand = rand[0]
+        #x_rand = np.random.rand()
+        x_rand = random()
+        file1 = open(r"logger.txt", "a")
+        #s = 'Seed used -----'+str(self.own.random_seed)+'----Random generated in swap---- '+ str(x_rand)+'\n'
+        s = '----Random generated in swap---- '+ str(x_rand)+'\n'
+        file1.write(s) 
+        file1.close() 
+        #print('----Random generated in swap----', x_rand)
+        if x_rand < self.success_probability():
+
             fidelity = self.updated_fidelity(self.left_memo.fidelity, self.right_memo.fidelity)
             self.is_success = True
 
