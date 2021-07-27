@@ -8,7 +8,8 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 random.seed(0)
-network_config = "../example/test_topology.json"
+#network_config = "../example/test_topology.json"
+network_config = "../example/linear_test_topology.json"
 
 tl = Timeline(4e12)
 network_topo = Topology("network_topo", tl)
@@ -72,19 +73,20 @@ if __name__ == "__main__":
     dest = str(sys.argv[4])
     attenuation = float(sys.argv[5])
     seed = int(sys.argv[6])
+    src = str(sys.argv[7])
     
     set_parameters(network_topo, attenuation, seed)
 
     if isvirtual == 'True':
-        node1 = "a"
-        node2 = "c"
-        nm = network_topo.nodes[node1].network_manager
-        nm.createvirtualrequest(node2, start_time=2e12, end_time=20e12, memory_size=1,target_fidelity=fidelityIntermediate )
-
-        #node1 = "d"
-        #node2 = "f"
+        #node1 = "m"
+        #node2 = "a"
         #nm = network_topo.nodes[node1].network_manager
-        #nm.createvirtualrequest(node2, start_time=3e12, end_time=20e12, memory_size=1, target_fidelity=fidelityIntermediate)
+        #nm.createvirtualrequest(node2, start_time=2e12, end_time=20e12, memory_size=1,target_fidelity=fidelityIntermediate )
+
+        node1 = "d"
+        node2 = "f"
+        nm = network_topo.nodes[node1].network_manager
+        nm.createvirtualrequest(node2, start_time=3e12, end_time=20e12, memory_size=1, target_fidelity=fidelityIntermediate)
 
         #the start and end nodes may be edited as desired 
         #node1 = "g"
@@ -96,24 +98,25 @@ if __name__ == "__main__":
         tl.init()
         tl.run()
 
-        max_time = 0
+        """max_time = 0
         max_time_fidelity = 0
-        for info in network_topo.nodes["a"].resource_manager.memory_manager:
-            if info.remote_node == 'c' and info.entangle_time > max_time:
+        for info in network_topo.nodes["m"].resource_manager.memory_manager:
+            if info.remote_node == 'a' and info.entangle_time > max_time:
                 max_time = info.entangle_time
                 max_time_fidelity = info.fidelity
 
-        #print('Fidelity obtained between a to c: ', max_time_fidelity)
-        """
+        print('Fidelity obtained between m to a: ', max_time_fidelity)
+        
         max_time = 0
         max_time_fidelity = 0
-        for info in network_topo.nodes["d"].resource_manager.memory_manager:
-            if info.remote_node == 'f' and info.entangle_time > max_time:
+        for info in network_topo.nodes["e"].resource_manager.memory_manager:
+            if info.remote_node == 'k' and info.entangle_time > max_time:
                 max_time = info.entangle_time
                 max_time_fidelity = info.fidelity
 
-        print('Fidelity obtained between d to f: ', max_time_fidelity)
+        print('Fidelity obtained between e to k: ', max_time_fidelity)
 
+    
         max_time = 0
         max_time_fidelity = 0
         for info in network_topo.nodes["g"].resource_manager.memory_manager:
@@ -143,25 +146,24 @@ if __name__ == "__main__":
                         #the simulation stops at the termination of last valid event, if valid events conitinue to be beyond this
                         #stop time then simulation stops at stop time.
     req_start_time = 5e12
-    nm2 = network_topo.nodes["a"].network_manager
+    nm2 = network_topo.nodes[src].network_manager
     nm2.request(dest, start_time=req_start_time, end_time=20e12, memory_size=1, target_fidelity=fidelityE2E)
 
     tl.run()
 
     
     #Find the max entanglement time at A or I to find max timestep taken
-    max_time = 0
+    max_time = -10
     max_time_fidelity = 0
     max_time_state = None
-    for info in network_topo.nodes["a"].resource_manager.memory_manager:
+    for info in network_topo.nodes[src].resource_manager.memory_manager:
         if info.remote_node == dest and info.entangle_time > max_time:
             max_time = info.entangle_time
             max_time_fidelity = info.fidelity
             max_time_state = info.state
 
-            if info.entangle_time > 0  and info.entangle_time < req_start_time:
-                max_time = req_start_time
-
+    if max_time < req_start_time:
+        max_time = req_start_time
 
     print(f"['{(max_time - req_start_time)*1e-12}','{round(max_time_fidelity, 3)}','{round(fidelityE2E, 3)}', '{max_time_state}']")
     
@@ -223,8 +225,8 @@ if __name__ == "__main__":
     for info in network_topo.nodes["k"].resource_manager.memory_manager:
         print("{:6}\t{:15}\t{:9}\t{}\t{}".format(str(info.index), str(info.remote_node),
                                             str(info.fidelity), str(info.entangle_time * 1e-12),str(info.state))) 
-                                           
-
+                                         
+    
     #Obtaining the physical graph
     nx_graph = network_topo.generate_nx_graph()
     #nx.draw(nx_graph, with_labels = True)
@@ -235,7 +237,7 @@ if __name__ == "__main__":
     virt_graph = network_topo.get_virtual_graph()
 
     network_topo.plot_graph(virt_graph)
-
+    
 
 
 

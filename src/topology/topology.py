@@ -349,7 +349,6 @@ class Topology():
         weights = nx.get_edge_attributes(nx_graph,'weight').values()
 
         nx.draw(nx_graph, edge_color=colors, with_labels = True)
-        
         #nx.draw(nx_graph,with_labels=True)
         plt.show()
 

@@ -176,10 +176,11 @@ class StaticRoutingProtocol(StackProtocol):
 
 
         
-        """print()
-        print('---------Next Hop Calculation using Modified Greedy------------')
-        print('Curr Node: ', curr_node,', picked neighbor: ', best_hop, ', distance b/w picked neighbor and destination ', least_dist)
-        print('Virtual Neighbors of current node: ', self.own.find_virtual_neighbors())
+        #print()
+        #print('---------Next Hop Calculation using Modified Greedy------------')
+        #print('Curr Node: ', curr_node,', picked neighbor: ', best_hop, ', distance b/w picked neighbor and destination ', least_dist)
+        
+        """print('Virtual Neighbors of current node: ', self.own.find_virtual_neighbors())
         print('---------------------------------------------------------------')
         print()"""
 
