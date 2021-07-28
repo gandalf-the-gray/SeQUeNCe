@@ -43,7 +43,7 @@ def set_parameters(topology: Topology, attenuation, seed):
     #SWAP_SUCC_PROB = 0.90
     #SWAP_SUCC_PROB = 0.99
     SWAP_SUCC_PROB = 0.95
-    #SWAP_SUCC_PROB = 0.50
+    #SWAP_SUCC_PROB = 1
     
     #SWAP_DEGRADATION = 0.99
     #SWAP_DEGRADATION = 1
@@ -167,12 +167,12 @@ if __name__ == "__main__":
 
     print(f"['{(max_time - req_start_time)*1e-12}','{round(max_time_fidelity, 3)}','{round(fidelityE2E, 3)}', '{max_time_state}']")
     
-
+    """
     #Along with this we'll print the fidelity too
 
     #print('tl.time= ',tl.time)
 
-    """print("A memories")
+    print("A memories")
     print("Index:\tEntangled Node:\tFidelity:\tEntanglement Time:\tState:")
     for info in network_topo.nodes["a"].resource_manager.memory_manager:
         print("{:6}\t{:15}\t{:9}\t{}\t{}".format(str(info.index), str(info.remote_node),

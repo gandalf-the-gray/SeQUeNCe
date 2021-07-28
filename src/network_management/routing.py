@@ -107,6 +107,7 @@ class StaticRoutingProtocol(StackProtocol):
 
         #Else section will run during backward propagation
         else:
+            #print('path: ', msg.path)
             #Return the prevous node of current node 
             curr_ele_index = msg.path.index(self.own.name)
             #print('Back routing phase: Next node  is ----', msg.path[curr_ele_index-1])

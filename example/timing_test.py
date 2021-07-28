@@ -58,7 +58,7 @@ if __name__ == "__main__":
         all_pair_shortest_dict = json.loads(json.dumps(all_pair_shortest_dict))
         #print(all_pair_shortest_dict)
 
-        source_nodes = ['a', 'd', 'f']
+        source_nodes = ['a']
         source_wise_dests = {}
         max_distance_from_src = 0
         for src in source_nodes:
