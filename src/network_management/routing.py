@@ -145,7 +145,7 @@ class StaticRoutingProtocol(StackProtocol):
         #print('Current Node: ', curr_node)
         for node in nodewise_dest_distance:
             #print((node,neighbor_dict[node]))
-            if node in virtual_neighbors.keys():
+            if (node in virtual_neighbors.keys()) or (node in neighbors):
                 #print('Virtual neighbor found: ', node)
                 dist = nodewise_dest_distance[node]
                 if dist < least_dist:
@@ -159,7 +159,11 @@ class StaticRoutingProtocol(StackProtocol):
         #Or if we pick an already traversed neighbor
         
         #print('Visited ----------------------', visited)
-        if best_hop == None or virtual_neighbors[best_hop] < demand or ( best_hop in visited):
+        best_hop_virtual_link_size = 0
+        if best_hop in virtual_neighbors:
+            best_hop_virtual_link_size = virtual_neighbors[best_hop]
+
+        if best_hop == None or  best_hop_virtual_link_size < demand or ( best_hop in visited):
             is_next_virtual = False
             least_dist = math.inf
             best_hop = None

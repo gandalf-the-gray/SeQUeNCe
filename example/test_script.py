@@ -382,12 +382,14 @@ def run(fidelityInt, fidelityE2E, isvirtual ,dest, attenuation, random_seed, src
 #for i in range(num_trials):
 #iter_seed = np.random.randint(2, 100, dtype='uint32')
 
-simul_trials = 1
+simul_trials = 50
 Avg_Physical_Ent_Time = [0 for i in range(max_distance_from_src)]
 Avg_Virtual_Ent_Time = [0 for i in range(max_distance_from_src)]
 Avg_fidelity_physical = [0 for i in range(max_distance_from_src)]
 Avg_fidelity_virtual = [0 for i in range(max_distance_from_src)]
 index_source_counter = {}
+num_trails_for_index_phy = [0 for i in range(max_distance_from_src)]
+num_trails_for_index_virt = [0 for i in range(max_distance_from_src)]
 attenuation = [1e-3]
 
 print(f'Running simulation for: {simul_trials} trials')
@@ -429,6 +431,8 @@ for i in range(simul_trials):
                         fidelity_physical.append(retvalPhy[1])
                         Avg_fidelity_physical[int(dist)-1] = Avg_fidelity_physical[int(dist)-1] + fidelity_physical[-1]
                         #print(Physical_Ent_Time)
+                        if retvalPhy[3] != None:
+                          num_trails_for_index_phy[int(dist)-1] = num_trails_for_index_phy[int(dist)-1]+1
                         
 
                         #print('Running for Virtual')
@@ -440,6 +444,8 @@ for i in range(simul_trials):
                         fidelity_virtual.append(retvalVirt[1])
                         Avg_fidelity_virtual[int(dist)-1] = Avg_fidelity_virtual[int(dist)-1] + fidelity_virtual[-1]
                         #print(Virtual_Ent_Time)
+                        if retvalVirt[3] != None:
+                          num_trails_for_index_virt[int(dist)-1] = num_trails_for_index_virt[int(dist)-1]+1
 
                         print('From retval ---- ', retvalVirt)
                         #seed = seed + 1
@@ -459,10 +465,10 @@ for i in range(simul_trials):
     #print("standard deviation: {}".format(stats.stdev(runtimes)))
 
 for i in range(max_distance_from_src):
-  Avg_Physical_Ent_Time[i] = Avg_Physical_Ent_Time[i]/(simul_trials*len(index_source_counter[i])*number_of_nodes_at_distance[i])
-  Avg_Virtual_Ent_Time[i] = Avg_Virtual_Ent_Time[i]/(simul_trials*len(index_source_counter[i])*number_of_nodes_at_distance[i])
-  Avg_fidelity_physical[i] = Avg_fidelity_physical[i]/(simul_trials*len(index_source_counter[i])*number_of_nodes_at_distance[i])
-  Avg_fidelity_virtual[i] = Avg_fidelity_virtual[i]/(simul_trials*len(index_source_counter[i])*number_of_nodes_at_distance[i])
+  Avg_Physical_Ent_Time[i] = Avg_Physical_Ent_Time[i]/(num_trails_for_index_phy[i]*len(index_source_counter[i])*number_of_nodes_at_distance[i])
+  Avg_Virtual_Ent_Time[i] = Avg_Virtual_Ent_Time[i]/(num_trails_for_index_virt[i]*len(index_source_counter[i])*number_of_nodes_at_distance[i])
+  Avg_fidelity_physical[i] = Avg_fidelity_physical[i]/(num_trails_for_index_phy[i]*len(index_source_counter[i])*number_of_nodes_at_distance[i])
+  Avg_fidelity_virtual[i] = Avg_fidelity_virtual[i]/(num_trails_for_index_virt[i]*len(index_source_counter[i])*number_of_nodes_at_distance[i])
 
 print('Avg_Physical_Ent_Time = ',Avg_Physical_Ent_Time)
 #print(Avg_Physical_Ent_Time)
