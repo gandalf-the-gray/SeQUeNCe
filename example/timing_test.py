@@ -108,7 +108,7 @@ if __name__ == "__main__":
     #for i in range(num_trials):
     #iter_seed = np.random.randint(2, 100, dtype='uint32')
     
-    simul_trials = 1
+    simul_trials = 10
     Avg_Physical_Ent_Time = [0 for i in range(max_distance_from_src)]
     Avg_Virtual_Ent_Time = [0 for i in range(max_distance_from_src)]
     Avg_fidelity_physical = []

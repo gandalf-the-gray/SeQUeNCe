@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
   
 def conti_code(fidelityIntermediate, fidelityE2E, isvirtual, dest, attenuation, seed, src):
   random.seed(0)
-  network_config = "../example/test_topology.json"
+  network_config = "../example/linear_test_topology.json"
 
   tl = Timeline(4e12)
   network_topo = Topology("network_topo", tl)
@@ -71,19 +71,40 @@ def conti_code(fidelityIntermediate, fidelityE2E, isvirtual, dest, attenuation, 
       #node2 = "a"
       #nm = network_topo.nodes[node1].network_manager
       #nm.createvirtualrequest(node2, start_time=2e12, end_time=20e12, memory_size=1,target_fidelity=fidelityIntermediate )
-
-      node1 = "d"
-      node2 = "f"
+      
+      #In case of Linear Topology
+      node1 = "a"
+      node2 = "c"
       nm = network_topo.nodes[node1].network_manager
       nm.createvirtualrequest(node2, start_time=3e12, end_time=20e12, memory_size=1, target_fidelity=fidelityIntermediate)
 
       #the start and end nodes may be edited as desired 
-      #node1 = "g"
-      #node2 = "i"
-      #nm = network_topo.nodes[node1].network_manager
-      #nm.createvirtualrequest(node2, start_time=2e12, end_time=20e12, memory_size=1, target_fidelity=fidelityIntermediate)
+      node1 = "e"
+      node2 = "g"
+      nm = network_topo.nodes[node1].network_manager
+      nm.createvirtualrequest(node2, start_time=2e12, end_time=20e12, memory_size=1, target_fidelity=fidelityIntermediate)
+      """
+      #In case of Extended Star Topology
+      node1 = "m"
+      node2 = "a"
+      nm = network_topo.nodes[node1].network_manager
+      nm.createvirtualrequest(node2, start_time=3e12, end_time=20e12, memory_size=1, target_fidelity=fidelityIntermediate)
 
+      node1 = "j"
+      node2 = "d"
+      nm = network_topo.nodes[node1].network_manager
+      nm.createvirtualrequest(node2, start_time=3e12, end_time=20e12, memory_size=1, target_fidelity=fidelityIntermediate)
 
+      node1 = "k"
+      node2 = "e"
+      nm = network_topo.nodes[node1].network_manager
+      nm.createvirtualrequest(node2, start_time=3e12, end_time=20e12, memory_size=1, target_fidelity=fidelityIntermediate)
+
+      node1 = "l"
+      node2 = "c"
+      nm = network_topo.nodes[node1].network_manager
+      nm.createvirtualrequest(node2, start_time=3e12, end_time=20e12, memory_size=1, target_fidelity=fidelityIntermediate)
+      """
       tl.init()
       tl.run()
 
@@ -216,6 +237,7 @@ def conti_code(fidelityIntermediate, fidelityE2E, isvirtual, dest, attenuation, 
                                           str(info.fidelity), str(info.entangle_time * 1e-12),str(info.state))) 
                                       
   
+
   #Obtaining the physical graph
   nx_graph = network_topo.generate_nx_graph()
   #nx.draw(nx_graph, with_labels = True)
@@ -226,8 +248,10 @@ def conti_code(fidelityIntermediate, fidelityE2E, isvirtual, dest, attenuation, 
   virt_graph = network_topo.get_virtual_graph()
 
   network_topo.plot_graph(virt_graph)
-  
 
+  return [(max_time - req_start_time)*1e-12, round(max_time_fidelity, 3), round(fidelityE2E, 3), max_time_state]
+  
+  
 
 
   
@@ -284,10 +308,10 @@ if __name__ == "__main__":
 try:
     
     fidelityIntermediate=[x for x in np.arange(0.7,0.71,0.03)]
-    fidelityE2E = [x for x in np.arange(0.5,0.51,0.03)]
+    fidelityE2E = [x for x in np.arange(0.3,0.31,0.03)]
     num_trials = len(fidelityE2E)*len(fidelityIntermediate)
     
-    with open('test_topology.json') as handle:
+    with open('linear_test_topology.json') as handle:
         topology_json = json.loads(handle.read())
 
     #print(topology_json["qconnections"])
@@ -305,10 +329,12 @@ try:
     all_pair_shortest_dict = json.loads(json.dumps(all_pair_shortest_dict))
     #print(all_pair_shortest_dict)
 
-    #source_nodes = ['a', 'd', 'f', 'i', 'k']
-    source_nodes = ['j', 'k']
+    source_nodes = ['a']
+    #source_nodes = ['m']
     source_wise_dests = {}
     max_distance_from_src = 0
+    number_of_nodes_at_distance = [0 for i in range(20)]
+
     for src in source_nodes:
         dest_dict = all_pair_shortest_dict[src]
         dest_dict = OrderedDict(sorted(dest_dict.items(), key=itemgetter(1)))
@@ -317,6 +343,8 @@ try:
         for (dest, dist) in source_wise_dests[src].items():
             if dist > max_distance_from_src:
                 max_distance_from_src = int(dist)
+            if src != dest:
+                number_of_nodes_at_distance[int(dist)-1] = number_of_nodes_at_distance[int(dist)-1]+1
 
     print(source_wise_dests)
 
@@ -354,12 +382,13 @@ def run(fidelityInt, fidelityE2E, isvirtual ,dest, attenuation, random_seed, src
 #for i in range(num_trials):
 #iter_seed = np.random.randint(2, 100, dtype='uint32')
 
-simul_trials = 5
+simul_trials = 1
 Avg_Physical_Ent_Time = [0 for i in range(max_distance_from_src)]
 Avg_Virtual_Ent_Time = [0 for i in range(max_distance_from_src)]
-Avg_fidelity_physical = []
-Avg_fidelity_virtual = []
+Avg_fidelity_physical = [0 for i in range(max_distance_from_src)]
+Avg_fidelity_virtual = [0 for i in range(max_distance_from_src)]
 index_source_counter = {}
+attenuation = [1e-3]
 
 print(f'Running simulation for: {simul_trials} trials')
 for i in range(simul_trials):
@@ -377,12 +406,14 @@ for i in range(simul_trials):
         #for dest in destinations:            
         for (dest, dist) in source_wise_dests[src].items():           
             if src == dest:
-                continue
+              continue
+
+            #if dest != 'k':
+            #  continue
         
             for f_i in fidelityIntermediate:
                 for f_e2e in fidelityE2E:            
-                    for atten in attenuation:
-                        
+                    for atten in attenuation:                        
                         #seeds=np.random.choice(16, 5)
                         #np.random.shuffle(seeds)
                         seeds = [0 for i in range(simul_trials)]
@@ -396,6 +427,7 @@ for i in range(simul_trials):
                         Avg_Physical_Ent_Time[int(dist)-1] = Avg_Physical_Ent_Time[int(dist)-1] + Physical_Ent_Time[-1]
                         #fidelity_physical.append(float(ast.literal_eval(retvalPhy)[1]))
                         fidelity_physical.append(retvalPhy[1])
+                        Avg_fidelity_physical[int(dist)-1] = Avg_fidelity_physical[int(dist)-1] + fidelity_physical[-1]
                         #print(Physical_Ent_Time)
                         
 
@@ -406,6 +438,7 @@ for i in range(simul_trials):
                         Avg_Virtual_Ent_Time[int(dist)-1] = Avg_Virtual_Ent_Time[int(dist)-1] + Virtual_Ent_Time[-1]
                         #fidelity_virtual.append(float(ast.literal_eval(retvalVirt)[1]))
                         fidelity_virtual.append(retvalVirt[1])
+                        Avg_fidelity_virtual[int(dist)-1] = Avg_fidelity_virtual[int(dist)-1] + fidelity_virtual[-1]
                         #print(Virtual_Ent_Time)
 
                         print('From retval ---- ', retvalVirt)
@@ -415,7 +448,8 @@ for i in range(simul_trials):
                         else:
                             source_set = index_source_counter[int(dist)-1]
                             source_set.add(src)
-                            index_source_counter[int(dist)-1] = source_set           
+                            index_source_counter[int(dist)-1] = source_set   
+
             index = index + 1
             #print("ran in {}s".format(runtimes[-1]))
 
@@ -424,14 +458,34 @@ for i in range(simul_trials):
     #print("max time:  {}".format(max(runtimes)))
     #print("standard deviation: {}".format(stats.stdev(runtimes)))
 
-fig, ax = plt.subplots()
-
 for i in range(max_distance_from_src):
-  Avg_Physical_Ent_Time[i] = Avg_Physical_Ent_Time[i]/(simul_trials*len(index_source_counter[i]))
-  Avg_Virtual_Ent_Time[i] = Avg_Virtual_Ent_Time[i]/(simul_trials*len(index_source_counter[i]))
+  Avg_Physical_Ent_Time[i] = Avg_Physical_Ent_Time[i]/(simul_trials*len(index_source_counter[i])*number_of_nodes_at_distance[i])
+  Avg_Virtual_Ent_Time[i] = Avg_Virtual_Ent_Time[i]/(simul_trials*len(index_source_counter[i])*number_of_nodes_at_distance[i])
+  Avg_fidelity_physical[i] = Avg_fidelity_physical[i]/(simul_trials*len(index_source_counter[i])*number_of_nodes_at_distance[i])
+  Avg_fidelity_virtual[i] = Avg_fidelity_virtual[i]/(simul_trials*len(index_source_counter[i])*number_of_nodes_at_distance[i])
+
+print('Avg_Physical_Ent_Time = ',Avg_Physical_Ent_Time)
+#print(Avg_Physical_Ent_Time)
+print()
+print('Avg_Virtual_Ent_Time = ',Avg_Virtual_Ent_Time)
+#print(Avg_Virtual_Ent_Time)
+print()
+print('Avg_fidelity_physical = ',Avg_fidelity_physical)
+#print(Avg_fidelity_physical)
+print()
+print('Avg_fidelity_virtual = ',Avg_fidelity_virtual)
+#print(Avg_fidelity_virtual)
+print()
+print('X axis')
+print([i for i in range(1, max_distance_from_src+1)])
+print()
+print('index_source_counter', index_source_counter)
+print()
+print('number_of_nodes_at_distance[int(dist)-1]', number_of_nodes_at_distance[int(dist)-1])
 
 #Change this
 #For change in distance from source
+fig, ax = plt.subplots()
 ax.plot([i for i in range(1, max_distance_from_src+1)], Avg_Physical_Ent_Time, color = 'blue' ,label = r'Time for physical')
 ax.plot([i for i in range(1, max_distance_from_src+1)], Avg_Virtual_Ent_Time, color = 'red', label = r'Time for virtual')
 
@@ -451,15 +505,14 @@ ax.legend(loc = 'upper left')
 plt.xlabel('Attenuation')
 plt.ylabel('Entanglement Time')
 plt.show()
-
-
-ax.plot(distance_from_src, fidelity_physical, alpha= 0.5,  color = 'red' ,label = r'Fidelity for physical')
-ax.plot(distance_from_src, fidelity_virtual, '--' , alpha= 0.5, color = 'black', label = r'Fidelity for virtual')
+"""
+fig, ax = plt.subplots()
+ax.plot([i for i in range(1, max_distance_from_src+1)], Avg_fidelity_physical, alpha= 0.5,  color = 'blue' ,label = r'Fidelity for physical')
+ax.plot([i for i in range(1, max_distance_from_src+1)], Avg_fidelity_virtual, '--' , alpha= 0.5, color = 'red', label = r'Fidelity for virtual')
 
 ax.legend(loc = 'upper right')
 plt.xlabel('Distance From Source')
 plt.ylabel('Entanglement Fidelity')
 plt.show()
-"""
 
 
