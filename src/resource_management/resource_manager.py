@@ -108,23 +108,25 @@ class ResourceManager():
         """
         #print("This is the rule------", rule)
         self.rule_manager.load(rule)
-        #print('resource manager to execute rule for node: ', self.owner.name)
-        #print("Index LOAD:\tEntangled Node L:\tFidelity L:\tEntanglement Time L:")
         
-        #count = 0   
-        for memory_info in self.memory_manager:
-            #print('This is resource manager looping through all memories of node: ', self.owner.name) 
-
-            
+        for memory_info in self.memory_manager:            
             memories_info = rule.is_valid(memory_info)
             if len(memories_info) > 0:
-                rule.do(memories_info)
-                
+
+                rule.do(memories_info)    
+
+                #if type(rule.protocols[0]).__name__ == 'EntanglementSwappingB':
+                #    print(f'Found memory indices for Ent EntanglementSwappingB for the node: {self.owner.name}')           
+
                 for info in memories_info:
-                    #print('Update to Occupied')
-                    #print(f'Shifting state to OCCUPIED for memory index  inside load:{info.index} for the node: {self.owner.name}')
-                    info.to_occupied()
-                
+                    #print('type of rule: ', type(rule.protocols[0]).__name__)
+                    #print('Rule name is: ', rule.protocols)
+                    #print('Update to Occupied from load() method')
+                    #print(f'Shifting state to OCCUPIED for memory index  inside load() :{info.index} for the node: {self.owner.name}')
+        
+                    #Only change the status of memory to occupied if it is not an instance of ESB
+                    #if type(rule.protocols[0]).__name__ != 'EntanglementSwappingB':
+                    info.to_occupied()                
 
         return True
 
@@ -166,6 +168,9 @@ class ResourceManager():
         """
 
         self.memory_manager.update(memory, state)
+        #if self.owner.name == 'd':
+        #    print(f'Updated status at node: {self.owner.name} to {state}')
+        #    print('Size of rule_manager: ', len(self.rule_manager))
         if protocol:
             memory.detach(protocol)
             memory.attach(memory.memory_array)
@@ -180,13 +185,25 @@ class ResourceManager():
 
         if protocol in self.pending_protocols:
             self.pending_protocols.remove(protocol)
+
          # check if any rules have been met
         memo_info = self.memory_manager.get_info_by_memory(memory)
+        #if state == 'ENTANGLED':
+            #print(f'To entangled called for the memory index {memo_info.index} at the node {self.owner.name}')
+
         for rule in self.rule_manager:
             memories_info = rule.is_valid(memo_info)
             if len(memories_info) > 0:
                 rule.do(memories_info)
                 for info in memories_info:
+                    #if state == 'ENTANGLED':
+                        #print(f'To occupied called for the memory index {info.index} at the node {self.owner.name}')
+                    """if type(rule.protocols[0]).__name__ == 'EntanglementSwappingB':
+                        print('type of rule: ', type(rule.protocols[0]).__name__)
+                        print('Rule name is: ', rule.protocols)
+                        print('Update to Occupied from update() method at time: ', self.owner.timeline.now())
+                        print(f'Shifting state to OCCUPIED for memory index  inside update() :{info.index} for the node: {self.owner.name}')"""
+            
                     info.to_occupied()
                 return
 
@@ -196,16 +213,16 @@ class ResourceManager():
         # check if any rules have been met
         memo_info = self.memory_manager.get_info_by_memory(memory)
         for rule in self.rule_manager:
-            print('Called from update method in resource manager ---- rule---- from  node: ', self.owner.name)
+            #print('Called from update method in resource manager ---- rule---- from  node: ', self.owner.name)
             if self.owner.name == 'd' and memo_info.remote_node == 'e':
-                print('Inside update method with remote node e')
+                #print('Inside update method with remote node e')
             memories_info = rule.is_valid(memo_info)
             if len(memories_info) > 0:
                 rule.do(memories_info)
                 
                 for info in memories_info:
-                    print('Update to Occupied')
-                    print(f'Shifting state to OCCUPIED for memory index inside update :{info.index} for the node: {self.owner.name}')
+                    #print('Update to Occupied')
+                    #print(f'Shifting state to OCCUPIED for memory index inside update :{info.index} for the node: {self.owner.name}')
                     info.to_occupied()
                 
                 return
@@ -239,10 +256,10 @@ class ResourceManager():
                                      req_condition_func=req_condition_func)
 
         """if self.owner.name == 'a' or self.owner.name == 'b':
-            print('Send Protocol Request at node: ', self.owner.name)
-            print('Requested Destination: ', req_dst)
-            print('protocol name: ', protocol.name)
-            print('ResourceManagerMsgType.REQUEST')"""
+            #print('Send Protocol Request at node: ', self.owner.name)
+            #print('Requested Destination: ', req_dst)
+            #print('protocol name: ', protocol.name)
+            #print('ResourceManagerMsgType.REQUEST')"""
 
         self.owner.send_message(req_dst, msg)
 
@@ -259,7 +276,7 @@ class ResourceManager():
         if msg.msg_type is ResourceManagerMsgType.REQUEST:
             protocol = msg.req_condition_func(self.waiting_protocols)
             
-            #print(protocol)
+            ##print(protocol)
             if protocol is not None:
                 protocol.set_others(msg.ini_protocol)
                 new_msg = ResourceManagerMessage(ResourceManagerMsgType.RESPONSE, protocol=msg.ini_protocol,
@@ -267,13 +284,13 @@ class ResourceManager():
                 self.owner.send_message(src, new_msg)
                 self.waiting_protocols.remove(protocol)
                 self.owner.protocols.append(protocol)
-                #print('#######Protocol Start method to be called##########')
-                #print('Protocol Name: ', protocol.name)
+                ##print('#######Protocol Start method to be called##########')
+                ##print('Protocol Name: ', protocol.name)
                 protocol.start()
                 return
 
-            """print('######Here we send protocol with approval as false##########')
-            print('Reply to Protocol Name: ', msg.ini_protocol.name)"""
+            """#print('######Here we send protocol with approval as false##########')
+            #print('Reply to Protocol Name: ', msg.ini_protocol.name)"""
             new_msg = ResourceManagerMessage(ResourceManagerMsgType.RESPONSE, protocol=msg.ini_protocol,
                                              is_approved=False, paired_protocol=None)
             self.owner.send_message(src, new_msg)
@@ -293,8 +310,8 @@ class ResourceManager():
                     protocol.own = self.owner
                     protocol.start()
             else:
-                #print('#######Protocol Not called##########')
-                #print('Protocol Name: ', protocol.name)
+                ##print('#######Protocol Not called##########')
+                ##print('Protocol Name: ', protocol.name)
                 protocol.rule.protocols.remove(protocol)
                 for memory in protocol.memories:
                     memory.detach(protocol)
@@ -303,6 +320,8 @@ class ResourceManager():
                     if info.remote_node is None:
                         self.update(None, memory, "RAW")
                     else:
+                        #print('msg.is_approved: ', msg.is_approved)
+                        #print('memory: ', memory)
                         self.update(None, memory, "ENTANGLED")
                 self.pending_protocols.remove(protocol)
         elif msg.msg_type is ResourceManagerMsgType.RELEASE_PROTOCOL:

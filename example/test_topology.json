@@ -64,18 +64,6 @@
         },
         {
             "node1": "a",
-            "node2": "c",
-            "attenuation": 1e-5,
-            "distance": 70
-        },
-        {
-            "node1": "a",
-            "node2": "d",
-            "attenuation": 1e-5,
-            "distance": 70
-        },
-        {
-            "node1": "a",
             "node2": "h",
             "attenuation": 1e-5,
             "distance": 70
@@ -100,19 +88,7 @@
         },
         {
             "node1": "c",
-            "node2": "e",
-            "attenuation": 1e-5,
-            "distance": 70
-        },
-        {
-            "node1": "c",
             "node2": "g",
-            "attenuation": 1e-5,
-            "distance": 70
-        },
-        {
-            "node1": "d",
-            "node2": "e",
             "attenuation": 1e-5,
             "distance": 70
         },
@@ -151,8 +127,7 @@
             "node2": "m",
             "attenuation": 1e-5,
             "distance": 70
-        }       
-
+        }
     ],
     "cchannels_table": {
         "type": "RT",

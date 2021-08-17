@@ -8,8 +8,8 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 random.seed(0)
-#network_config = "../example/test_topology.json"
-network_config = "../example/linear_test_topology.json"
+network_config = "../example/test_topology.json"
+#network_config = "../example/linear_test_topology.json"
 
 tl = Timeline(4e12)
 network_topo = Topology("network_topo", tl)
@@ -78,22 +78,17 @@ if __name__ == "__main__":
     set_parameters(network_topo, attenuation, seed)
 
     if isvirtual == 'True':
-        #node1 = "m"
-        #node2 = "a"
-        #nm = network_topo.nodes[node1].network_manager
-        #nm.createvirtualrequest(node2, start_time=2e12, end_time=20e12, memory_size=1,target_fidelity=fidelityIntermediate )
-
-        node1 = "d"
-        node2 = "f"
+        """
+        #In case of Extended Star Topology
+        node1 = "j"
+        node2 = "d"
         nm = network_topo.nodes[node1].network_manager
         nm.createvirtualrequest(node2, start_time=3e12, end_time=20e12, memory_size=1, target_fidelity=fidelityIntermediate)
-
-        #the start and end nodes may be edited as desired 
-        #node1 = "g"
-        #node2 = "i"
-        #nm = network_topo.nodes[node1].network_manager
-        #nm.createvirtualrequest(node2, start_time=2e12, end_time=20e12, memory_size=1, target_fidelity=fidelityIntermediate)
-
+        node1 = "g"
+        node2 = "h"
+        nm = network_topo.nodes[node1].network_manager
+        nm.createvirtualrequest(node2, start_time=3e12, end_time=20e12, memory_size=1, target_fidelity=0.5)
+        """
 
         tl.init()
         tl.run()

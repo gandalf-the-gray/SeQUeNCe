@@ -76,15 +76,15 @@ class StackProtocol(Protocol):
 
     def _push(self, **kwargs):
         for protocol in self.lower_protocols:
-            #print('self.name', self.name)
-            #print('-----------protocol---------------', protocol)
-            #print('--------------------qcaps---------------- ', kwargs["msg"].qcaps[-1].node)
+            ##print('self.name', self.name)
+            ##print('-----------protocol---------------', protocol)
+            ##print('--------------------qcaps---------------- ', kwargs["msg"].qcaps[-1].node)
             protocol.push(**kwargs)
 
     def _pop(self, **kwargs):
         for protocol in self.upper_protocols:
-            #print('self.name', self.name)
-            #print('-----------self.upper_protocols---------------', self.upper_protocols)
+            ##print('self.name', self.name)
+            ##print('-----------self.upper_protocols---------------', self.upper_protocols)
             protocol.pop(**kwargs)
 
     def received_message(self, src: str, msg: "Message"):

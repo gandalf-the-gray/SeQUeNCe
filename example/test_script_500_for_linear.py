@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
   
 def conti_code(fidelityIntermediate, fidelityE2E, isvirtual, dest, attenuation, seed, src):
   random.seed(0)
-  network_config = "../example/test_topology.json"
+  network_config = "../example/linear_test_topology.json"
 
   tl = Timeline(4e12)
   network_topo = Topology("network_topo", tl)
@@ -72,7 +72,6 @@ def conti_code(fidelityIntermediate, fidelityE2E, isvirtual, dest, attenuation, 
       #nm = network_topo.nodes[node1].network_manager
       #nm.createvirtualrequest(node2, start_time=2e12, end_time=20e12, memory_size=1,target_fidelity=fidelityIntermediate )
       
-      """
       #In case of Linear Topology
       node1 = "a"
       node2 = "c"
@@ -84,13 +83,8 @@ def conti_code(fidelityIntermediate, fidelityE2E, isvirtual, dest, attenuation, 
       node2 = "g"
       nm = network_topo.nodes[node1].network_manager
       nm.createvirtualrequest(node2, start_time=2e12, end_time=20e12, memory_size=1, target_fidelity=fidelityIntermediate)
-
-      node1 = "i"
-      node2 = "l"
-      nm = network_topo.nodes[node1].network_manager
-      nm.createvirtualrequest(node2, start_time=2e12, end_time=20e12, memory_size=1, target_fidelity=fidelityIntermediate)
+      
       """
-
       #In case of Extended Star Topology
       node1 = "m"
       node2 = "a"
@@ -111,7 +105,7 @@ def conti_code(fidelityIntermediate, fidelityE2E, isvirtual, dest, attenuation, 
       node2 = "c"
       nm = network_topo.nodes[node1].network_manager
       nm.createvirtualrequest(node2, start_time=3e12, end_time=20e12, memory_size=1, target_fidelity=fidelityIntermediate)
-      
+      """
 
       tl.init()
       tl.run()
@@ -319,7 +313,7 @@ try:
     fidelityE2E = [x for x in np.arange(0.3,0.31,0.03)]
     num_trials = len(fidelityE2E)*len(fidelityIntermediate)
     
-    with open('test_topology.json') as handle:
+    with open('linear_test_topology.json') as handle:
         topology_json = json.loads(handle.read())
 
     #print(topology_json["qconnections"])
@@ -337,8 +331,8 @@ try:
     all_pair_shortest_dict = json.loads(json.dumps(all_pair_shortest_dict))
     #print(all_pair_shortest_dict)
 
-    #source_nodes = ['a']
-    source_nodes = ['m']
+    source_nodes = ['a']
+    #source_nodes = ['m']
     source_wise_dests = {}
     max_distance_from_src = 0
     number_of_nodes_at_distance = [0 for i in range(20)]
@@ -390,7 +384,7 @@ def run(fidelityInt, fidelityE2E, isvirtual ,dest, attenuation, random_seed, src
 #for i in range(num_trials):
 #iter_seed = np.random.randint(2, 100, dtype='uint32')
 
-simul_trials = 10
+simul_trials = 500
 Avg_Physical_Ent_Time = [0 for i in range(max_distance_from_src)]
 Avg_Virtual_Ent_Time = [0 for i in range(max_distance_from_src)]
 Avg_fidelity_physical = [0 for i in range(max_distance_from_src)]
@@ -402,15 +396,15 @@ list_Avg_fidelity_physical = []
 list_Avg_fidelity_virtual = []
 
 index_source_counter = {}
-num_trails_for_index_phy = [0 for i in range(max_distance_from_src)]
-num_trails_for_index_virt = [0 for i in range(max_distance_from_src)]
+#num_trails_for_index_phy = [0 for i in range(max_distance_from_src)]
+#num_trails_for_index_virt = [0 for i in range(max_distance_from_src)]
 attenuation = [1e-3]
 
 print(f'Running simulation for: {simul_trials} trials')
 for i in range(simul_trials):
     print('Trial #: ', i)
 
-    if i%2 == 0 and i != 0:
+    if i%100 == 0 and i != 0:
       Avg_Physical_Ent_Time_interval_100 = [0 for i in range(max_distance_from_src)]
       Avg_Virtual_Ent_Time_interval_100 = [0 for i in range(max_distance_from_src)]
       Avg_fidelity_physical_interval_100 = [0 for i in range(max_distance_from_src)]
@@ -464,8 +458,8 @@ for i in range(simul_trials):
                         fidelity_physical.append(retvalPhy[1])
                         Avg_fidelity_physical[int(dist)-1] = Avg_fidelity_physical[int(dist)-1] + fidelity_physical[-1]
                         #print(Physical_Ent_Time)
-                        if retvalPhy[3] != None:
-                          num_trails_for_index_phy[int(dist)-1] = num_trails_for_index_phy[int(dist)-1]+1
+                        #if retvalPhy[3] != None:
+                        #  num_trails_for_index_phy[int(dist)-1] = num_trails_for_index_phy[int(dist)-1]+1
                         
 
                         #print('Running for Virtual')
@@ -477,8 +471,8 @@ for i in range(simul_trials):
                         fidelity_virtual.append(retvalVirt[1])
                         Avg_fidelity_virtual[int(dist)-1] = Avg_fidelity_virtual[int(dist)-1] + fidelity_virtual[-1]
                         #print(Virtual_Ent_Time)
-                        if retvalVirt[3] != None:
-                          num_trails_for_index_virt[int(dist)-1] = num_trails_for_index_virt[int(dist)-1]+1
+                        #if retvalVirt[3] != None:
+                        #  num_trails_for_index_virt[int(dist)-1] = num_trails_for_index_virt[int(dist)-1]+1
 
                         print('From retval ---- ', retvalVirt)
                         #seed = seed + 1
@@ -498,7 +492,6 @@ for i in range(simul_trials):
     #print("standard deviation: {}".format(stats.stdev(runtimes)))
 
 for i in range(max_distance_from_src):
-  """
   Avg_Physical_Ent_Time[i] = Avg_Physical_Ent_Time[i]/(simul_trials*len(index_source_counter[i])*number_of_nodes_at_distance[i])
   Avg_Virtual_Ent_Time[i] = Avg_Virtual_Ent_Time[i]/(simul_trials*len(index_source_counter[i])*number_of_nodes_at_distance[i])
   Avg_fidelity_physical[i] = Avg_fidelity_physical[i]/(simul_trials*len(index_source_counter[i])*number_of_nodes_at_distance[i])
@@ -509,7 +502,7 @@ for i in range(max_distance_from_src):
   Avg_Virtual_Ent_Time[i] = Avg_Virtual_Ent_Time[i]/(num_trails_for_index_virt[i]*len(index_source_counter[i])*number_of_nodes_at_distance[i])
   Avg_fidelity_physical[i] = Avg_fidelity_physical[i]/(num_trails_for_index_phy[i]*len(index_source_counter[i])*number_of_nodes_at_distance[i])
   Avg_fidelity_virtual[i] = Avg_fidelity_virtual[i]/(num_trails_for_index_virt[i]*len(index_source_counter[i])*number_of_nodes_at_distance[i])
-  
+  """
 
 for lst in list_Avg_Physical_Ent_Time:
   print('Avg_Physical_Ent_Time = ', lst)

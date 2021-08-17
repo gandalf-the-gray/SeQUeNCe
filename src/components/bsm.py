@@ -8,6 +8,7 @@ from abc import abstractmethod
 from typing import Any, Dict, List
 
 from numpy import random, outer, add, zeros
+import random as rnd
 
 from .circuit import Circuit
 from .detector import Detector
@@ -138,6 +139,8 @@ class BSM(Entity):
         if not any([reference.location == photon.location for reference in self.photons]):
             self.photons.append(photon)
 
+        #print(f'BSM parent get() and photons: {self.photons}')
+
     @abstractmethod
     def trigger(self, detector: Detector, info: Dict[str, Any]):
         """Method to receive photon detection events from attached detectors (abstract).
@@ -195,7 +198,7 @@ class PolarizationBSM(BSM):
             May call get method of one or more attached detector(s).
             May alter the quantum state of photon and any stored photons.
         """
-
+        #print('PolarizationBSM')
         super().get(photon)
 
         if len(self.photons) != 2:
@@ -251,6 +254,7 @@ class PolarizationBSM(BSM):
             # Psi+
             elif abs(detector_last - detector_num) == 1:
                 info = {'entity': 'BSM', 'info_type': 'BSM_res', 'res': 0, 'time': time}
+                #print(f'Polarization BSM value: Psi+')
                 self.notify(info)
 
         self.last_res = [time, detector_num]
@@ -292,13 +296,13 @@ class TimeBinBSM(BSM):
             May call get method of one or more attached detector(s).
             May alter the quantum state of photon and any stored photons.
         """
-
+        #print('TimeBinBSM')
         super().get(photon)
 
         if len(self.photons) != 2:
             return
 
-        if random.random_sample() < self.phase_error:
+        if rnd.random() < self.phase_error:
             self.photons[1].apply_phase_error()
         # entangle photons to measure
         self.photons[0].entangle(self.photons[1])
@@ -405,12 +409,13 @@ class SingleAtomBSM(BSM):
             May call get method of one or more attached detector(s).
             May alter the quantum state of photon and any stored photons, as well as their corresponding memories.
         """
-
+        #print('SingleAtomBSM')
         super().get(photon)
 
         memory = photon.memory
 
         # check if we're in first stage. If we are and not null, send photon to random detector
+        #print('Is photon null? ', photon.is_null)
         if not photon.is_null:
             detector_num = random.choice([0, 1])
             memory.previous_bsm = detector_num

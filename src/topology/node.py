@@ -124,7 +124,7 @@ class Node(Entity):
 
     def send_qubit(self, dst: str, qubit) -> None:
         """Interface for quantum channel `transmit` method."""
-
+        #print(f'sent qubit from node: {self.name} to node: {dst}')
         self.qchannels[dst].transmit(qubit, self)
 
     def receive_qubit(self, src: str, qubit) -> None:
@@ -168,7 +168,7 @@ class BSMNode(Node):
                     return
 
         # if we reach here, we didn't successfully receive the message in any protocol
-        #print(src, msg)
+        ##print(src, msg)
         raise Exception("Unkown protocol")
 
     def receive_qubit(self, src: str, qubit):
@@ -180,7 +180,7 @@ class BSMNode(Node):
             src (str): name of node where qubit was sent from.
             qubit (any): transmitted qubit.
         """
-
+        #print(f'optical_channel at node: {self.name}, recv qubit from {src}')
         self.bsm.get(qubit)
 
     def eg_add_others(self, other):
@@ -237,10 +237,10 @@ class QuantumRouter(Node):
         #Check the memory of this node for existing entanglements
         for info in self.resource_manager.memory_manager:
             
-            if info.remote_node == None:
+            if info.state != 'ENTANGLED':
                 continue
             else:
-                #print((node, info.remote_node))
+                ##print((node, info.remote_node))
                 #This is a virtual neighbor
                 #nx_graph.add_edge(node, str(info.remote_node), color='r')
                 if str(info.remote_node) in virtual_neighbors.keys():
@@ -540,7 +540,7 @@ class QKDNode(Node):
                 return
 
         # if we reach here, we didn't successfully receive the message in any protocol
-        #print(self.protocols)
+        ##print(self.protocols)
         raise Exception("Message received for unknown protocol '{}' on node {}".format(msg.owner_type, self.name))
 
     def receive_qubit(self, src: str, qubit) -> None:

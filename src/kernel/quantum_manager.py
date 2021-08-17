@@ -16,6 +16,7 @@ from qutip.qip.circuit import QubitCircuit, Gate
 from qutip.qip.operations import gate_sequence_product
 from numpy import log2, array, kron, identity, zeros, arange, outer
 from numpy.random import random_sample, choice
+from random import random
 
 from .quantum_utils import *
 
@@ -185,7 +186,7 @@ class QuantumManagerKet(QuantumManager):
         if len(keys) == 1:
             if len(all_keys) == 1:
                 prob_0 = measure_state_with_cache_ket(tuple(state))
-                if random_sample() < prob_0:
+                if random() < prob_0:
                     result = 0
                 else:
                     result = 1
@@ -195,7 +196,7 @@ class QuantumManagerKet(QuantumManager):
                 num_states = len(all_keys)
                 state_index = all_keys.index(key)
                 state_0, state_1, prob_0 = measure_entangled_state_with_cache_ket(tuple(state), state_index, num_states)
-                if random_sample() < prob_0:
+                if random() < prob_0:
                     new_state = array(state_0, dtype=complex)
                     result = 0
                 else:
@@ -294,7 +295,7 @@ class QuantumManagerDensity(QuantumManager):
         if len(keys) == 1:
             if len(all_keys) == 1:
                 prob_0 = measure_state_with_cache_density(tuple(map(tuple, state)))
-                if random_sample() < prob_0:
+                if random() < prob_0:
                     result = 0
                     new_state = [[1, 0], [0, 0]]
                 else:
@@ -307,7 +308,7 @@ class QuantumManagerDensity(QuantumManager):
                 state_index = all_keys.index(key)
                 state_0, state_1, prob_0 = measure_entangled_state_with_cache_density(tuple(map(tuple, state)),
                         state_index, num_states)
-                if random_sample() < prob_0:
+                if random() < prob_0:
                     new_state = array(state_0, dtype=complex)
                     result = 0
                 else:

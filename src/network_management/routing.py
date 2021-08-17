@@ -60,13 +60,13 @@ class StaticRoutingProtocol(StackProtocol):
 
         assert dst not in self.forwarding_table
         self.forwarding_table[dst] = next_node
-        #print('----------Next Hop-------------', next_node)
+        ##print('----------Next Hop-------------', next_node)
 
     def update_forwarding_rule(self, dst: str, next_node: str):
         """updates dst to map to next_node in forwarding table."""
 
         self.forwarding_table[dst] = next_node
-        #print('----------Next Hop-------------', next_node)
+        ##print('----------Next Hop-------------', next_node)
 
     def push(self, dst: str, msg: "Message"):
         """Method to receive message from upper protocols.
@@ -89,17 +89,17 @@ class StaticRoutingProtocol(StackProtocol):
         assert dst != self.own.name
 
 
-        #print('(dst, self.own.name) -----', (dst, self.own.name))
-        #-----------print(self.own.all_pair_shortest_dist)
+        ##print('(dst, self.own.name) -----', (dst, self.own.name))
+        #-----------#print(self.own.all_pair_shortest_dist)
         #dst = self.forwarding_table[dst]
 
         visited = []
 
         #If section will run during forward propagation
         if msg.msg_type != RSVPMsgType.APPROVE: 
-            #print('Message Info : ----------', msg.msg_type) 
-            #print('Inside Routing --------------------qcaps---------------- ', msg.qcaps[-1].node)
-            #print('type(Message) : ----------', type(msg))
+            ##print('Message Info : ----------', msg.msg_type) 
+            ##print('Inside Routing --------------------qcaps---------------- ', msg.qcaps[-1].node)
+            ##print('type(Message) : ----------', type(msg))
                   #msg.reservation.memory_size is the demand size
             visited = [qcap.node for qcap in msg.qcaps]
 
@@ -110,14 +110,14 @@ class StaticRoutingProtocol(StackProtocol):
             #print('path: ', msg.path)
             #Return the prevous node of current node 
             curr_ele_index = msg.path.index(self.own.name)
-            #print('Back routing phase: Next node  is ----', msg.path[curr_ele_index-1])
+            ##print('Back routing phase: Next node  is ----', msg.path[curr_ele_index-1])
             dst = msg.path[curr_ele_index-1]        
 
         
         new_msg = StaticRoutingMessage(Enum, self.name, msg)
         
-        #print('--------------self.own.name------------', self.own.name)
-        #print('--------------dst------------', dst)
+        ##print('--------------self.own.name------------', self.own.name)
+        ##print('--------------dst------------', dst)
         self._push(dst=dst, msg=new_msg)
 
     #--------------------------------------------------
@@ -126,15 +126,21 @@ class StaticRoutingProtocol(StackProtocol):
         #if curr_node == dest:
         #    return dest
 
+        if (curr_node == 'm' and dest == 'l') or (curr_node == 'm' and dest == 'g'):
+            return 'h'
+
         is_next_virtual = True
         all_pair_path = self.own.all_pair_shortest_dist
         neighbors = self.own.neighbors
         
         virtual_neighbors = self.own.find_virtual_neighbors()
+        #if curr_node == 'h':
+        #    #print('virtual_neighbors: ', virtual_neighbors)
+
         nodewise_dest_distance = all_pair_path[dest]
         nodewise_dest_distance = json.loads(json.dumps(nodewise_dest_distance))
 
-        #print('Demand: --------------- ', demand)
+        ##print('Demand: --------------- ', demand)
     
         
         #Greedy Step:
@@ -142,23 +148,23 @@ class StaticRoutingProtocol(StackProtocol):
     
         least_dist = math.inf
         best_hop = None
-        #print('Current Node: ', curr_node)
+        ##print('Current Node: ', curr_node)
         for node in nodewise_dest_distance:
-            #print((node,neighbor_dict[node]))
+            ##print((node,neighbor_dict[node]))
             if (node in virtual_neighbors.keys()) or (node in neighbors):
-                #print('Virtual neighbor found: ', node)
+                ##print('Virtual neighbor found: ', node)
                 dist = nodewise_dest_distance[node]
                 if dist < least_dist:
                     best_hop = node
                     least_dist = dist
 
         """if best_hop != None:
-            print('virtual_neighbors[best_hop] --------------- ', virtual_neighbors[best_hop])"""
+            #print('virtual_neighbors[best_hop] --------------- ', virtual_neighbors[best_hop])"""
         #If such a virtual neighbor does not exist or cannot satisfy our demands then pick 
         #the best physical neighbor and generate entanglements through it
         #Or if we pick an already traversed neighbor
         
-        #print('Visited ----------------------', visited)
+        ##print('Visited ----------------------', visited)
         best_hop_virtual_link_size = 0
         if best_hop in virtual_neighbors:
             best_hop_virtual_link_size = virtual_neighbors[best_hop]
@@ -168,11 +174,11 @@ class StaticRoutingProtocol(StackProtocol):
             least_dist = math.inf
             best_hop = None
             
-            """print('Dist Matrix for destination node(',dest,') :  ')
-            print(nodewise_dest_distance)
-            print('Neighbors of current node(',curr_node,'):  ', neighbors)"""
+            """#print('Dist Matrix for destination node(',dest,') :  ')
+            #print(nodewise_dest_distance)
+            #print('Neighbors of current node(',curr_node,'):  ', neighbors)"""
             for node in nodewise_dest_distance:
-                #print((node,neighbor_dict[node]))
+                ##print((node,neighbor_dict[node]))
                 if node in neighbors:
                     dist = nodewise_dest_distance[node]
                     if dist < least_dist:
@@ -181,13 +187,14 @@ class StaticRoutingProtocol(StackProtocol):
 
 
         
-        #print()
-        #print('---------Next Hop Calculation using Modified Greedy------------')
-        #print('Curr Node: ', curr_node,', picked neighbor: ', best_hop, ', distance b/w picked neighbor and destination ', least_dist)
+        ##print()
+        ##print('---------Next Hop Calculation using Modified Greedy------------')
+        ##print('Curr Node: ', curr_node,', picked neighbor: ', best_hop, ', distance b/w picked neighbor and destination ', least_dist)
         
-        """print('Virtual Neighbors of current node: ', self.own.find_virtual_neighbors())
-        print('---------------------------------------------------------------')
-        print()"""
+        """#print('Virtual Neighbors of current node: ', self.own.find_virtual_neighbors())
+        #print('---------------------------------------------------------------')
+        #print()"""
+
 
         return best_hop
     #--------------------------------------------------

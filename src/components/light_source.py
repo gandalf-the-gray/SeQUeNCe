@@ -5,6 +5,8 @@ These classes should be connected to one or two entities, respectively, that are
 """
 
 from numpy import random, multiply
+import random as rnd
+
 
 from .photon import Photon
 from ..kernel.entity import Entity
@@ -84,7 +86,7 @@ class LightSource(Entity):
         for i, state in enumerate(state_list):
             num_photons = random.poisson(self.mean_photon_num)
 
-            if random.random_sample() < self.phase_error:
+            if rnd.random() < self.phase_error:
                 state = multiply([1, -1], state)
 
             for _ in range(num_photons):
@@ -143,7 +145,7 @@ class SPDCSource(LightSource):
         for state in state_list:
             num_photon_pairs = random.poisson(self.mean_photon_num)
 
-            if random.random_sample() < self.phase_error:
+            if rnd.random() < self.phase_error:
                 state = multiply([1, -1], state)
 
             for _ in range(num_photon_pairs):

@@ -7,7 +7,8 @@ attached receivers (which can be any entity).
 
 from typing import TYPE_CHECKING
 
-from numpy.random import random_sample
+#from numpy.random import random_sample
+from random import random
 
 if TYPE_CHECKING:
     from ..kernel.timeline import Timeline
@@ -69,7 +70,8 @@ class BeamSplitter(Entity):
 
         assert photon.encoding_type["name"] == "polarization"
 
-        if random_sample() < self.fidelity:
+        #if random_sample() < self.fidelity:
+        if random() < self.fidelity:
             index = int((self.timeline.now() - self.start_time) * self.frequency * 1e-12)
 
             if 0 > index or index >= len(self.basis_list):

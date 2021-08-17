@@ -85,7 +85,7 @@ class RandomRequestApp():
         fidelity = self.rg.uniform(0.8, 1)
         self.cur_reserve = [responder, start_time, end_time, memory_size, fidelity]
         self.node.reserve_net_resource(responder, start_time, end_time, memory_size, fidelity)
-        # print(self.node.timeline.now(), self.node.name, "request", self.cur_reserve)
+        # #print(self.node.timeline.now(), self.node.name, "request", self.cur_reserve)
 
     def retry(self, responder: str, fidelity: float) -> None:
         """Method to retry a failed request.
@@ -129,7 +129,7 @@ class RandomRequestApp():
             self.get_other_reservation(reservation)
             process = Process(self, "start", [])
             self.reserves.append(self.cur_reserve)
-            # print(self.node.timeline.now(), self.node.name, "request", self.cur_reserve, result)
+            # #print(self.node.timeline.now(), self.node.name, "request", self.cur_reserve, result)
             event = Event(self.cur_reserve[2] + 1, process)
             self.node.timeline.schedule(event)
             self.wait_time.append(self.cur_reserve[1] - self.request_time)

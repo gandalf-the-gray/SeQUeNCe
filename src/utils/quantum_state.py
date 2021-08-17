@@ -9,6 +9,7 @@ from typing import Tuple
 
 from numpy import pi, cos, sin, array, outer, kron, identity, arange
 from numpy.random import random, random_sample, choice
+import random as rnd
 
 
 def swap_bits(num, pos1, pos2):
@@ -121,7 +122,7 @@ class QuantumState():
             num_states = len(self.entangled_states)
             state_index = self.entangled_states.index(self)
             state0, state1, prob = _measure_entangled_state_with_cache(self.state, basis, state_index, num_states)
-            if random_sample() < prob:
+            if rnd.random() < prob:
                 new_state = state0
                 result = 0
             else:
@@ -132,7 +133,7 @@ class QuantumState():
         # handle unentangled case
         else:
             prob = _measure_state_with_cache(self.state, basis)
-            if random_sample() < prob:
+            if rnd.random() < prob:
                 new_state = basis[0]
                 result = 0
             else:
