@@ -505,11 +505,17 @@ for i in range(max_distance_from_src):
   Avg_fidelity_virtual[i] = Avg_fidelity_virtual[i]/(simul_trials*len(index_source_counter[i])*number_of_nodes_at_distance[i])
 
   """
+  """
   Avg_Physical_Ent_Time[i] = Avg_Physical_Ent_Time[i]/(num_trails_for_index_phy[i]*len(index_source_counter[i])*number_of_nodes_at_distance[i])
   Avg_Virtual_Ent_Time[i] = Avg_Virtual_Ent_Time[i]/(num_trails_for_index_virt[i]*len(index_source_counter[i])*number_of_nodes_at_distance[i])
   Avg_fidelity_physical[i] = Avg_fidelity_physical[i]/(num_trails_for_index_phy[i]*len(index_source_counter[i])*number_of_nodes_at_distance[i])
   Avg_fidelity_virtual[i] = Avg_fidelity_virtual[i]/(num_trails_for_index_virt[i]*len(index_source_counter[i])*number_of_nodes_at_distance[i])
-  
+  """
+
+  Avg_Physical_Ent_Time[i] = Avg_Physical_Ent_Time[i]/(num_trails_for_index_phy[i]*len(index_source_counter[i]))
+  Avg_Virtual_Ent_Time[i] = Avg_Virtual_Ent_Time[i]/(num_trails_for_index_virt[i]*len(index_source_counter[i]))
+  Avg_fidelity_physical[i] = Avg_fidelity_physical[i]/(num_trails_for_index_phy[i]*len(index_source_counter[i]))
+  Avg_fidelity_virtual[i] = Avg_fidelity_virtual[i]/(num_trails_for_index_virt[i]*len(index_source_counter[i]))
 
 for lst in list_Avg_Physical_Ent_Time:
   print('Avg_Physical_Ent_Time = ', lst)
