@@ -547,7 +547,11 @@ print([i for i in range(1, max_distance_from_src+1)])
 print()
 print('index_source_counter', index_source_counter)
 print()
-print('number_of_nodes_at_distance[int(dist)-1]', number_of_nodes_at_distance[int(dist)-1])
+print('number_of_nodes_at_distance', number_of_nodes_at_distance)
+print()
+print('num_trails_for_index_phy', num_trails_for_index_phy)
+print()
+print('num_trails_for_index_virt', num_trails_for_index_virt)
 
 #Change this
 #For change in distance from source
